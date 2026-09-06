@@ -105,7 +105,7 @@
     }
   </style>
 </head>
-
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <body>
 
   <div class="container">
@@ -292,7 +292,15 @@
       const link = document.createElement("a");
 
       link.download = "pocket-scanner-document.png";
+      
+<button id="ocrBtn" onclick="extractText()">
+  📝 Extract Text
+</button>
 
+<textarea id="textResult"
+  placeholder="Extracted text will appear here..."
+  style="width:100%;height:180px;margin-top:12px;padding:12px;border-radius:12px;font-size:16px;">
+</textarea>
       link.href = canvas.toDataURL("image/png");
 
       link.click();
@@ -332,6 +340,32 @@
     }
 
   </script>
+async function extractText() {
 
+  const canvas = document.getElementById("canvas");
+  const result = document.getElementById("result");
+  const textBox = document.getElementById("textResult");
+
+  result.innerText = "📝 Reading text...";
+
+  try {
+
+    const worker = await Tesseract.createWorker("eng");
+
+    const { data: { text } } =
+      await worker.recognize(canvas);
+
+    textBox.value = text;
+
+    await worker.terminate();
+
+    result.innerText = "✅ Text extracted successfully.";
+
+  } catch (error) {
+
+    result.innerText = "❌ OCR failed.";
+
+  }
+}
 </body>
 </html>
