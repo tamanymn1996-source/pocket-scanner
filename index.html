@@ -3,137 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pocket Broker Signal</title>
+<title>Auto Pocket Signal</title>
 
 <style>
 *{box-sizing:border-box}
-
 body{
  margin:0;
  background:#0f1115;
  color:#fff;
- font-family:Arial,sans-serif;
+ font-family:Arial,sans-serif
 }
-
 .wrap{
  max-width:520px;
  margin:auto;
- padding:18px;
+ padding:18px
 }
-
 .card{
  background:#191d24;
  border:1px solid #303640;
- border-radius:20px;
- padding:20px;
+ border-radius:18px;
+ padding:18px
 }
-
-h1{
- text-align:center;
- margin:5px 0 4px;
- font-size:30px;
-}
-
-.sub{
- text-align:center;
- color:#aaa;
- margin-bottom:22px;
-}
+h1{text-align:center;margin:8px 0}
+.sub{text-align:center;color:#aaa;margin-bottom:18px}
 
 label{
  display:block;
  color:#bbb;
- font-size:18px;
- margin:15px 0 8px;
+ margin:12px 0 6px
+}
+
+input,select,button{
+ width:100%;
+ padding:13px;
+ border-radius:11px;
+ border:1px solid #39404c;
+ font-size:16px
 }
 
 input,select{
- width:100%;
- padding:18px;
- border-radius:14px;
- border:1px solid #3b4250;
- background:#0d0f14;
- color:#fff;
- font-size:20px;
- outline:none;
+ background:#0f1115;
+ color:#fff
 }
 
 button{
- width:100%;
- border:0;
- border-radius:15px;
- padding:18px;
- margin-top:22px;
- background:#2864e8;
+ margin-top:16px;
+ background:#2563eb;
  color:#fff;
- font-size:20px;
- font-weight:bold;
- cursor:pointer;
-}
-
-button:active{
- transform:scale(.98);
-}
-
-.result{
- margin-top:25px;
- background:#0d0f14;
- border-radius:20px;
- padding:25px 15px;
- text-align:center;
-}
-
-.signal-title{
- color:#ddd;
- font-size:20px;
+ border:0;
+ font-weight:bold
 }
 
 .signal{
- font-size:58px;
- font-weight:bold;
- margin:10px 0;
+ margin-top:18px;
+ text-align:center;
+ padding:22px;
+ border-radius:15px;
+ background:#0f1115
 }
 
-.call{color:#20d061}
-.put{color:#ff4141}
-.wait{color:#ffc126}
-
-.conf{
- font-size:20px;
- color:#ddd;
+.signal b{
+ font-size:34px;
+ display:block;
+ margin:8px
 }
+
+.up{color:#22c55e}
+.down{color:#ef4444}
+.wait{color:#f59e0b}
 
 .grid{
  display:grid;
  grid-template-columns:1fr 1fr;
- gap:16px;
- margin-top:18px;
+ gap:10px;
+ margin-top:14px
 }
 
 .box{
- background:#0d0f14;
- border-radius:16px;
- padding:18px 10px;
+ background:#0f1115;
+ padding:12px;
+ border-radius:10px;
  text-align:center;
-}
-
-.box span{
- display:block;
- color:#aaa;
- font-size:18px;
- margin-bottom:10px;
+ color:#aaa
 }
 
 .box strong{
- font-size:22px;
+ display:block;
+ color:#fff;
+ font-size:17px;
+ margin-top:4px
 }
 
-.note{
- margin-top:22px;
- color:#999;
+.status{
  text-align:center;
- font-size:15px;
- line-height:1.5;
+ margin-top:12px;
+ color:#60a5fa
+}
+
+small{
+ display:block;
+ color:#888;
+ text-align:center;
+ margin-top:14px;
+ line-height:1.5
 }
 </style>
 </head>
@@ -141,223 +113,304 @@ button:active{
 <body>
 
 <div class="wrap">
-
 <div class="card">
 
-<h1>📊 Pocket Broker Signal</h1>
-<div class="sub">Technical Signal Analyzer</div>
+<h1>📊 Auto Pocket Signal</h1>
+<div class="sub">Live 1-Minute Technical Signal</div>
 
-<label>Asset</label>
-<input id="asset" value="EUR/USD">
+<label>🔑 Twelve Data API Key</label>
+<input id="apiKey" type="password" placeholder="Paste your API key">
 
-<label>Current Price</label>
-<input id="price" type="number" step="any" value="1.0850">
-
-<label>Previous Price</label>
-<input id="prev" type="number" step="any" value="1.0840">
-
-<label>RSI (0–100)</label>
-<input id="rsi" type="number" min="0" max="100" step="any" value="50">
-
-<label>EMA 9</label>
-<input id="ema9" type="number" step="any" value="1.0850">
-
-<label>EMA 21</label>
-<input id="ema21" type="number" step="any" value="1.0840">
-
-<label>Timeframe</label>
-<select id="timeframe">
-<option>1 MIN</option>
-<option>5 MIN</option>
-<option>15 MIN</option>
-<option>30 MIN</option>
-<option>1 HOUR</option>
+<label>💱 Asset</label>
+<select id="asset">
+<option value="EUR/USD">EUR/USD</option>
+<option value="GBP/USD">GBP/USD</option>
+<option value="USD/JPY">USD/JPY</option>
+<option value="AUD/USD">AUD/USD</option>
+<option value="USD/CAD">USD/CAD</option>
+<option value="USD/CHF">USD/CHF</option>
 </select>
 
-<button onclick="analyze()">🔎 GENERATE SIGNAL</button>
+<button onclick="startAuto()">▶ START AUTO SIGNAL</button>
 
-<div id="result" class="result">
-<div class="signal-title">Signal</div>
-<div class="signal wait">WAIT</div>
-<div class="conf">Enter values and generate signal</div>
+<div class="signal" id="signal">
+WAITING...
 </div>
 
 <div class="grid">
 
 <div class="box">
-<span>Asset</span>
-<strong id="outAsset">—</strong>
+Price
+<strong id="price">—</strong>
 </div>
 
 <div class="box">
-<span>Timeframe</span>
-<strong id="outTime">—</strong>
+Asset
+<strong id="a">—</strong>
 </div>
 
 <div class="box">
-<span>RSI</span>
-<strong id="outRSI">—</strong>
+RSI
+<strong id="rsi">—</strong>
 </div>
 
 <div class="box">
-<span>Trend</span>
-<strong id="outTrend">—</strong>
+EMA 9
+<strong id="ema9">—</strong>
+</div>
+
+<div class="box">
+EMA 21
+<strong id="ema21">—</strong>
+</div>
+
+<div class="box">
+Trend
+<strong id="trend">—</strong>
 </div>
 
 </div>
 
-<div class="note">
-⚠️ Technical analysis only. Signals are not guaranteed profits.
+<div class="status" id="status">
+Not started
 </div>
+
+<small>
+⚠️ Signals are technical estimates only and are not guaranteed profits.
+</small>
 
 </div>
 </div>
 
 <script>
 
-function analyze(){
+let timer = null;
 
- const asset = document.getElementById("asset").value.trim();
+function calculateEMA(values, period){
 
- const p = parseFloat(
-   document.getElementById("price").value
- );
+    if(values.length < period) return null;
 
- const prev = parseFloat(
-   document.getElementById("prev").value
- );
+    let multiplier = 2 / (period + 1);
 
- const rsi = parseFloat(
-   document.getElementById("rsi").value
- );
+    let ema = values
+        .slice(0, period)
+        .reduce((a,b)=>a+b,0) / period;
 
- const ema9 = parseFloat(
-   document.getElementById("ema9").value
- );
+    for(let i=period;i<values.length;i++){
+        ema = ((values[i]-ema)*multiplier)+ema;
+    }
 
- const ema21 = parseFloat(
-   document.getElementById("ema21").value
- );
+    return ema;
+}
 
- const timeframe =
-   document.getElementById("timeframe").value;
 
- if(
-   !asset ||
-   !Number.isFinite(p) ||
-   !Number.isFinite(prev) ||
-   !Number.isFinite(rsi) ||
-   !Number.isFinite(ema9) ||
-   !Number.isFinite(ema21) ||
-   rsi < 0 ||
-   rsi > 100
- ){
-   document.getElementById("result").innerHTML = `
-     <div class="signal-title">⚠️ Error</div>
-     <div class="signal wait" style="font-size:30px">
-       ENTER ALL VALUES
-     </div>
-   `;
-   return;
- }
+function calculateRSI(values, period=14){
 
- let score = 0;
+    if(values.length < period+1) return null;
 
- /* PRICE MOMENTUM */
- if(p > prev){
-   score += 1;
- }else if(p < prev){
-   score -= 1;
- }
+    let gains = 0;
+    let losses = 0;
 
- /* EMA TREND */
- if(ema9 > ema21){
-   score += 2;
- }else if(ema9 < ema21){
-   score -= 2;
- }
+    for(let i=1;i<=period;i++){
 
- /* RSI */
- if(rsi >= 50 && rsi < 70){
-   score += 1;
- }else if(rsi <= 50 && rsi > 30){
-   score -= 1;
- }
+        let diff = values[i]-values[i-1];
 
- /* Avoid extreme RSI */
- if(rsi >= 70){
-   score -= 1;
- }
+        if(diff >= 0){
+            gains += diff;
+        }else{
+            losses += Math.abs(diff);
+        }
+    }
 
- if(rsi <= 30){
-   score += 1;
- }
+    let avgGain = gains / period;
+    let avgLoss = losses / period;
 
- let signal;
- let cls;
- let confidence;
+    for(let i=period+1;i<values.length;i++){
 
- if(score >= 3){
+        let diff = values[i]-values[i-1];
 
-   signal = "CALL";
-   cls = "call";
+        let gain = diff > 0 ? diff : 0;
+        let loss = diff < 0 ? Math.abs(diff) : 0;
 
-   confidence = Math.min(
-     95,
-     60 + (score - 3) * 8
-   );
+        avgGain = ((avgGain*(period-1))+gain)/period;
+        avgLoss = ((avgLoss*(period-1))+loss)/period;
+    }
 
- }else if(score <= -3){
+    if(avgLoss === 0) return 100;
 
-   signal = "PUT";
-   cls = "put";
+    let rs = avgGain / avgLoss;
 
-   confidence = Math.min(
-     95,
-     60 + (Math.abs(score) - 3) * 8
-   );
+    return 100 - (100/(1+rs));
+}
 
- }else{
 
-   signal = "WAIT";
-   cls = "wait";
+async function getData(){
 
-   confidence = 50 + Math.abs(score) * 3;
- }
+    const key = document.getElementById("apiKey").value.trim();
+    const asset = document.getElementById("asset").value;
 
- let trend;
+    if(!key){
+        document.getElementById("signal").innerHTML =
+        '<span class="wait">⚠️ API KEY پێویستە</span>';
+        return;
+    }
 
- if(ema9 > ema21){
-   trend = "UP";
- }else if(ema9 < ema21){
-   trend = "DOWN";
- }else{
-   trend = "SIDEWAYS";
- }
+    document.getElementById("status").textContent =
+    "🔄 Getting live market data...";
 
- document.getElementById("result").innerHTML = `
-   <div class="signal-title">Signal</div>
+    try{
 
-   <div class="signal ${cls}">
-     ${signal}
-   </div>
+        const url =
+        "https://api.twelvedata.com/time_series" +
+        "?symbol="+encodeURIComponent(asset) +
+        "&interval=1min" +
+        "&outputsize=100" +
+        "&timezone=UTC" +
+        "&apikey="+encodeURIComponent(key);
 
-   <div class="conf">
-     Confidence: ${confidence}%
-   </div>
- `;
+        const response = await fetch(url);
 
- document.getElementById("outAsset").textContent =
-   asset;
+        const data = await response.json();
 
- document.getElementById("outTime").textContent =
-   timeframe;
+        if(data.status === "error"){
 
- document.getElementById("outRSI").textContent =
-   rsi;
+            throw new Error(data.message || "API error");
+        }
 
- document.getElementById("outTrend").textContent =
-   trend;
+        if(!data.values || data.values.length < 30){
+
+            throw new Error("Not enough candle data");
+        }
+
+        /*
+          Twelve Data returns newest candle first.
+          We skip candle 0 because it may still be forming.
+        */
+
+        const candles = data.values.slice(1);
+
+        const closes = candles
+            .map(x => Number(x.close))
+            .reverse();
+
+        const currentPrice =
+            Number(candles[0].close);
+
+        const ema9 =
+            calculateEMA(closes,9);
+
+        const ema21 =
+            calculateEMA(closes,21);
+
+        const rsi =
+            calculateRSI(closes,14);
+
+        if(ema9 === null || ema21 === null || rsi === null){
+
+            throw new Error("Indicator calculation failed");
+        }
+
+        let score = 0;
+
+        // EMA trend
+        if(ema9 > ema21){
+            score += 1;
+        }else if(ema9 < ema21){
+            score -= 1;
+        }
+
+        // RSI
+        if(rsi >= 50 && rsi < 70){
+            score += 1;
+        }
+
+        if(rsi <= 50 && rsi > 30){
+            score -= 1;
+        }
+
+        // Price vs EMA21
+        if(currentPrice > ema21){
+            score += 1;
+        }else if(currentPrice < ema21){
+            score -= 1;
+        }
+
+        let signal = "WAIT";
+        let className = "wait";
+        let confidence = 55;
+
+        if(score >= 2){
+
+            signal = "CALL";
+            className = "up";
+            confidence = 70 + Math.min(score-2,2)*5;
+
+        }else if(score <= -2){
+
+            signal = "PUT";
+            className = "down";
+            confidence = 70 + Math.min(Math.abs(score)-2,2)*5;
+        }
+
+        document.getElementById("signal").innerHTML =
+        '<div>NEW SIGNAL</div>' +
+        '<b class="'+className+'">' +
+        (signal==="CALL" ? "🟢 " :
+         signal==="PUT" ? "🔴 " : "🟡 ") +
+        signal +
+        '</b>' +
+        '<div>Confidence: '+confidence+'%</div>';
+
+        document.getElementById("price").textContent =
+        currentPrice.toFixed(5);
+
+        document.getElementById("a").textContent =
+        asset;
+
+        document.getElementById("rsi").textContent =
+        rsi.toFixed(1);
+
+        document.getElementById("ema9").textContent =
+        ema9.toFixed(5);
+
+        document.getElementById("ema21").textContent =
+        ema21.toFixed(5);
+
+        document.getElementById("trend").textContent =
+        ema9 > ema21 ? "UP" :
+        ema9 < ema21 ? "DOWN" : "SIDEWAYS";
+
+        document.getElementById("status").textContent =
+        "🟢 Live • Updated: " +
+        new Date().toLocaleTimeString();
+
+    }catch(error){
+
+        document.getElementById("status").textContent =
+        "❌ "+error.message;
+
+        document.getElementById("signal").innerHTML =
+        '<span class="wait">⚠️ DATA ERROR</span>';
+    }
+}
+
+
+function startAuto(){
+
+    if(timer){
+        clearInterval(timer);
+    }
+
+    getData();
+
+    /*
+      Update every 60 seconds.
+    */
+
+    timer = setInterval(getData,60000);
+
+    document.getElementById("status").textContent =
+    "🟢 AUTO SIGNAL STARTED";
 }
 
 </script>
