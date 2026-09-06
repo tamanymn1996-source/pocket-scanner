@@ -111,6 +111,20 @@ font-size:18px;
 margin-top:5px
 }
 
+.entryBox{
+margin-top:14px;
+background:#0d1015;
+padding:15px;
+border-radius:12px;
+text-align:center
+}
+
+.entryBox strong{
+display:block;
+font-size:24px;
+margin-top:5px
+}
+
 .status{
 text-align:center;
 margin-top:14px;
@@ -172,61 +186,66 @@ placeholder="Paste your API key"
 WAITING...
 </div>
 
-<div class="count" id="countdown"></div>
+<div class="entryBox">
+🎯 ENTRY PRICE
+<strong id="entry">—</strong>
+</div>
 
 <div class="grid">
 
 <div class="box">
-Price
+⏱️ Expiry
+<strong id="expiry">1 MIN</strong>
+</div>
+
+<div class="box">
+💰 Price
 <strong id="price">—</strong>
 </div>
 
 <div class="box">
-Asset
-<strong id="assetShow">—</strong>
-</div>
-
-<div class="box">
-RSI
+📊 RSI
 <strong id="rsi">—</strong>
 </div>
 
 <div class="box">
-EMA 9
+📈 EMA 9
 <strong id="ema9">—</strong>
 </div>
 
 <div class="box">
-EMA 21
+📉 EMA 21
 <strong id="ema21">—</strong>
 </div>
 
 <div class="box">
-Trend
+📈 Trend
 <strong id="trend">—</strong>
 </div>
 
 <div class="box">
-Candle
+🕯️ Candle
 <strong id="candle">—</strong>
 </div>
 
 <div class="box">
-Momentum
+⚡ Momentum
 <strong id="momentum">—</strong>
 </div>
 
 <div class="box">
-Strength
+💪 Strength
 <strong id="strength">—</strong>
 </div>
 
 <div class="box">
-Score
+🎯 Score
 <strong id="score">—</strong>
 </div>
 
 </div>
+
+<div class="count" id="countdown"></div>
 
 <div class="status" id="status">
 Not started
@@ -235,12 +254,11 @@ Not started
 <small>
 ⚠️ Technical estimates only.
 No strategy guarantees profit.
-Signals are not financial advice.
+This app generates signals only and does not place trades.
 </small>
 
 </div>
 </div>
-
 
 <script>
 
@@ -275,7 +293,6 @@ ema=
 }
 
 return ema;
-
 }
 
 
@@ -344,7 +361,7 @@ return 100-(100/(1+rs));
 
 
 /* =========================
-   DATA
+   GET DATA
 ========================= */
 
 async function getData(){
@@ -369,7 +386,6 @@ document
 '<span class="wait">⚠️ API KEY پێویستە</span>';
 
 return;
-
 }
 
 
@@ -420,22 +436,17 @@ throw new Error(
 }
 
 
-/*
-Newest candle can still be forming.
-Use closed candles.
-*/
+/* Closed candles only */
 
 const candles=
 data.values.slice(1);
-
-
-/* newest closed candle */
 
 const latest=
 candles[0];
 
 const previous=
 candles[1];
+
 
 const closes=
 candles
@@ -446,16 +457,8 @@ candles
 const price=
 Number(latest.close);
 
-
 const open=
 Number(latest.open);
-
-const high=
-Number(latest.high);
-
-const low=
-Number(latest.low);
-
 
 const previousClose=
 Number(previous.close);
@@ -542,16 +545,14 @@ trend="DOWN";
 
 
 /* =========================
-   SMART SCORE
+   SCORE
 ========================= */
 
 let callScore=0;
 let putScore=0;
 
 
-/*
-EMA trend
-*/
+/* EMA */
 
 if(ema9>ema21){
 
@@ -566,9 +567,7 @@ putScore+=2;
 }
 
 
-/*
-Price vs EMA21
-*/
+/* Price vs EMA21 */
 
 if(price>ema21){
 
@@ -583,9 +582,7 @@ putScore+=1;
 }
 
 
-/*
-RSI
-*/
+/* RSI */
 
 if(RSI>=52 && RSI<=68){
 
@@ -600,9 +597,7 @@ putScore+=2;
 }
 
 
-/*
-Momentum
-*/
+/* Momentum */
 
 if(momentum==="UP"){
 
@@ -617,9 +612,7 @@ putScore+=1;
 }
 
 
-/*
-Candle confirmation
-*/
+/* Candle */
 
 if(candleDirection==="BULLISH"){
 
@@ -635,7 +628,7 @@ putScore+=1;
 
 
 /* =========================
-   SIGNAL DECISION
+   SIGNAL
 ========================= */
 
 let signal="WAIT";
@@ -647,38 +640,26 @@ const difference=
 Math.abs(callScore-putScore);
 
 
-/*
-CALL
-*/
-
 if(
 callScore>=5 &&
 callScore>putScore
 ){
 
 signal="CALL";
+
 className="up";
 
 confidence=
 70+
 Math.min(difference*4,15);
 
-if(callScore>=7){
-
-strength="STRONG";
-
-}else{
-
-strength="MEDIUM";
+strength=
+callScore>=7?
+"STRONG":
+"MEDIUM";
 
 }
 
-}
-
-
-/*
-PUT
-*/
 
 else if(
 putScore>=5 &&
@@ -686,27 +667,23 @@ putScore>callScore
 ){
 
 signal="PUT";
+
 className="down";
 
 confidence=
 70+
 Math.min(difference*4,15);
 
-if(putScore>=7){
-
-strength="STRONG";
-
-}else{
-
-strength="MEDIUM";
-
-}
+strength=
+putScore>=7?
+"STRONG":
+"MEDIUM";
 
 }
 
 
 /* =========================
-   DISPLAY SIGNAL
+   SIGNAL DISPLAY
 ========================= */
 
 document
@@ -737,9 +714,15 @@ confidence+
 '%</div>';
 
 
-/* =========================
-   DISPLAY DATA
-========================= */
+/* ENTRY */
+
+document
+.getElementById("entry")
+.textContent=
+price.toFixed(5);
+
+
+/* PRICE */
 
 document
 .getElementById("price")
@@ -747,11 +730,7 @@ document
 price.toFixed(5);
 
 
-document
-.getElementById("assetShow")
-.textContent=
-asset;
-
+/* ASSET */
 
 document
 .getElementById("rsi")
@@ -759,11 +738,12 @@ document
 RSI.toFixed(1);
 
 
+/* EMA */
+
 document
 .getElementById("ema9")
 .textContent=
 ema9.toFixed(5);
-
 
 document
 .getElementById("ema21")
@@ -771,11 +751,15 @@ document
 ema21.toFixed(5);
 
 
+/* TREND */
+
 document
 .getElementById("trend")
 .textContent=
 trend;
 
+
+/* CANDLE */
 
 document
 .getElementById("candle")
@@ -783,17 +767,23 @@ document
 candleDirection;
 
 
+/* MOMENTUM */
+
 document
 .getElementById("momentum")
 .textContent=
 momentum;
 
 
+/* STRENGTH */
+
 document
 .getElementById("strength")
 .textContent=
 strength;
 
+
+/* SCORE */
 
 document
 .getElementById("score")
@@ -802,6 +792,8 @@ callScore+
 " / "+
 putScore;
 
+
+/* STATUS */
 
 document
 .getElementById("status")
