@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto Pocket Signal PRO+</title>
+<title>Auto Pocket Signal PRO</title>
 
 <style>
 *{box-sizing:border-box}
@@ -31,7 +31,7 @@ padding:18px
 h1{
 text-align:center;
 margin:5px 0;
-font-size:29px
+font-size:28px
 }
 
 .sub{
@@ -67,8 +67,8 @@ border:0;
 font-weight:bold
 }
 
-button.stop{
-background:#dc2626
+.stop{
+background:#dc2626!important
 }
 
 .signal{
@@ -80,7 +80,7 @@ background:#0d1015
 }
 
 .signal b{
-font-size:42px;
+font-size:44px;
 display:block;
 margin:8px
 }
@@ -88,6 +88,20 @@ margin:8px
 .up{color:#22c55e}
 .down{color:#ef4444}
 .wait{color:#f59e0b}
+
+.entry{
+margin-top:12px;
+padding:14px;
+background:#0d1015;
+border-radius:12px;
+text-align:center
+}
+
+.entry strong{
+display:block;
+font-size:24px;
+margin-top:5px
+}
 
 .grid{
 display:grid;
@@ -111,31 +125,17 @@ font-size:18px;
 margin-top:5px
 }
 
-.entryBox{
-margin-top:14px;
-background:#0d1015;
-padding:15px;
-border-radius:12px;
-text-align:center
-}
-
-.entryBox strong{
-display:block;
-font-size:24px;
-margin-top:5px
-}
-
 .count{
 text-align:center;
 color:#fbbf24;
 font-weight:bold;
-font-size:18px;
-margin-top:10px
+font-size:19px;
+margin-top:12px
 }
 
 .status{
 text-align:center;
-margin-top:14px;
+margin-top:13px;
 color:#60a5fa
 }
 
@@ -148,7 +148,7 @@ gap:8px
 
 .stat{
 background:#0d1015;
-padding:12px 5px;
+padding:12px 4px;
 border-radius:11px;
 text-align:center
 }
@@ -177,65 +177,41 @@ text-align:center;
 margin:5px 0 15px
 }
 
-.historyItem{
-padding:12px;
-margin-top:8px;
+.item{
 background:#181d25;
-border-radius:10px
+padding:12px;
+border-radius:11px;
+margin-top:8px
 }
 
-.historyTop{
+.top{
 display:flex;
-justify-content:space-between;
-align-items:center
+justify-content:space-between
 }
 
-.historyBottom{
+.bottom{
 display:flex;
 justify-content:space-between;
 margin-top:6px;
-color:#999
+color:#999;
+font-size:14px
 }
 
-.callHistory{
-color:#22c55e;
-font-weight:bold
-}
+.call{color:#22c55e;font-weight:bold}
+.put{color:#ef4444;font-weight:bold}
+.win{color:#22c55e;font-weight:bold}
+.loss{color:#ef4444;font-weight:bold}
+.pending{color:#f59e0b;font-weight:bold}
 
-.putHistory{
-color:#ef4444;
-font-weight:bold
-}
-
-.waitHistory{
-color:#f59e0b;
-font-weight:bold
-}
-
-.win{
-color:#22c55e;
-font-weight:bold
-}
-
-.loss{
-color:#ef4444;
-font-weight:bold
-}
-
-.pending{
-color:#f59e0b;
-font-weight:bold
-}
-
-.clearBtn{
+.clear{
 background:#374151;
 font-size:14px
 }
 
 small{
 display:block;
-color:#858b96;
 text-align:center;
+color:#858b96;
 line-height:1.5;
 margin-top:15px
 }
@@ -247,7 +223,7 @@ margin-top:15px
 <div class="wrap">
 <div class="card">
 
-<h1>📊 Auto Pocket Signal PRO+</h1>
+<h1>📊 Auto Pocket Signal PRO</h1>
 
 <div class="sub">
 Smart 1-Minute Technical Signal
@@ -256,7 +232,7 @@ Smart 1-Minute Technical Signal
 <label>🔑 Twelve Data API Key</label>
 
 <input
-id="apiKey"
+id="api"
 type="password"
 placeholder="Paste your API key"
 >
@@ -272,7 +248,7 @@ placeholder="Paste your API key"
 <option value="USD/CHF">USD/CHF</option>
 </select>
 
-<button id="startBtn" onclick="toggleAuto()">
+<button id="start" onclick="toggle()">
 ▶ START AUTO SIGNAL
 </button>
 
@@ -280,7 +256,7 @@ placeholder="Paste your API key"
 WAITING...
 </div>
 
-<div class="entryBox">
+<div class="entry">
 🎯 ENTRY PRICE
 <strong id="entry">—</strong>
 </div>
@@ -288,12 +264,12 @@ WAITING...
 <div class="grid">
 
 <div class="box">
-⏱️ Expiry
+⏱️ TIMEFRAME
 <strong>1 MIN</strong>
 </div>
 
 <div class="box">
-💰 Price
+💰 PRICE
 <strong id="price">—</strong>
 </div>
 
@@ -313,40 +289,38 @@ WAITING...
 </div>
 
 <div class="box">
-📈 Trend
+📈 TREND
 <strong id="trend">—</strong>
 </div>
 
 <div class="box">
-🕯️ Candle
+🕯️ CANDLE
 <strong id="candle">—</strong>
 </div>
 
 <div class="box">
-⚡ Momentum
+⚡ MOMENTUM
 <strong id="momentum">—</strong>
 </div>
 
 <div class="box">
-💪 Strength
+💪 STRENGTH
 <strong id="strength">—</strong>
 </div>
 
 <div class="box">
-🎯 Score
+🎯 SCORE
 <strong id="score">—</strong>
 </div>
 
 </div>
 
-<div class="count" id="countdown"></div>
+<div class="count" id="count">
+</div>
 
 <div class="status" id="status">
 Not started
 </div>
-
-
-<!-- STATS -->
 
 <div class="stats">
 
@@ -362,310 +336,213 @@ Not started
 
 <div class="stat">
 <span>🎯 WIN RATE</span>
-<strong id="winrate">0%</strong>
+<strong id="rate">0%</strong>
 </div>
 
 </div>
-
-
-<!-- HISTORY -->
 
 <div class="history">
 
 <h2>📜 Signal History</h2>
 
-<div id="historyList">
+<div id="history">
 No signals yet
 </div>
 
-<button
-onclick="clearHistory()"
-class="clearBtn">
+<button class="clear" onclick="clearHistory()">
 🗑️ CLEAR HISTORY
 </button>
 
 </div>
 
-
 <small>
 ⚠️ Technical estimates only.
-No strategy guarantees profit.
+No signal guarantees profit.
 This app generates signals only and does not place trades.
 </small>
 
 </div>
 </div>
 
-
 <script>
 
 let timer=null;
-let countdownTimer=null;
-let seconds=60;
+let clock=null;
+let sec=60;
 
 
-/* =================================
-   EMA
-================================= */
+/* EMA */
 
-function calculateEMA(values,period){
+function EMA(a,p){
 
-if(values.length<period)return null;
+if(a.length<p)return null;
 
-let ema=
-values
-.slice(0,period)
-.reduce((a,b)=>a+b,0)/period;
+let e=0;
 
-let multiplier=2/(period+1);
-
-for(let i=period;i<values.length;i++){
-
-ema=
-((values[i]-ema)*multiplier)+ema;
-
+for(let i=0;i<p;i++){
+e+=a[i];
 }
 
-return ema;
+e/=p;
+
+let m=2/(p+1);
+
+for(let i=p;i<a.length;i++){
+e=(a[i]-e)*m+e;
 }
 
-
-/* =================================
-   RSI
-================================= */
-
-function calculateRSI(values,period=14){
-
-if(values.length<period+1)return null;
-
-let gains=0;
-let losses=0;
-
-for(let i=1;i<=period;i++){
-
-let diff=values[i]-values[i-1];
-
-if(diff>0){
-gains+=diff;
-}else{
-losses+=Math.abs(diff);
-}
-
-}
-
-let avgGain=gains/period;
-let avgLoss=losses/period;
-
-for(
-let i=period+1;
-i<values.length;
-i++
-){
-
-let diff=values[i]-values[i-1];
-
-let gain=diff>0?diff:0;
-let loss=diff<0?Math.abs(diff):0;
-
-avgGain=
-((avgGain*(period-1))+gain)/period;
-
-avgLoss=
-((avgLoss*(period-1))+loss)/period;
-
-}
-
-if(avgLoss===0)return 100;
-
-let rs=avgGain/avgLoss;
-
-return 100-(100/(1+rs));
+return e;
 }
 
 
-/* =================================
-   HISTORY
-================================= */
+/* RSI */
 
-function getHistory(){
+function RSI(a,p=14){
+
+if(a.length<p+1)return null;
+
+let gain=0;
+let loss=0;
+
+for(let i=1;i<=p;i++){
+
+let d=a[i]-a[i-1];
+
+if(d>0)gain+=d;
+else loss+=Math.abs(d);
+
+}
+
+let ag=gain/p;
+let al=loss/p;
+
+for(let i=p+1;i<a.length;i++){
+
+let d=a[i]-a[i-1];
+
+let g=d>0?d:0;
+let l=d<0?Math.abs(d):0;
+
+ag=(ag*(p-1)+g)/p;
+al=(al*(p-1)+l)/p;
+
+}
+
+if(al===0)return 100;
+
+return 100-(100/(1+ag/al));
+}
+
+
+/* Storage */
+
+function getH(){
 
 return JSON.parse(
-localStorage.getItem("signalHistory")||"[]"
+localStorage.getItem("autoSignals")||"[]"
 );
 
 }
 
+function saveH(x){
 
-function saveHistory(signal,price,confidence){
+let h=getH();
 
-if(signal==="WAIT")return;
+h.unshift(x);
 
-let history=getHistory();
-
-history.unshift({
-
-signal:signal,
-
-entry:Number(price).toFixed(5),
-
-confidence:confidence,
-
-asset:
-document.getElementById("asset").value,
-
-time:new Date().toLocaleTimeString(),
-
-result:"PENDING",
-
-exit:"—"
-
-});
-
-history=history.slice(0,20);
+h=h.slice(0,30);
 
 localStorage.setItem(
-"signalHistory",
-JSON.stringify(history)
+"autoSignals",
+JSON.stringify(h)
 );
 
-showHistory();
+}
 
-updateStats();
+
+/* Statistics */
+
+function stats(){
+
+let h=getH();
+
+let w=h.filter(x=>x.result==="WIN").length;
+
+let l=h.filter(x=>x.result==="LOSS").length;
+
+let total=w+l;
+
+let r=total?
+Math.round(w/total*100):0;
+
+document.getElementById("wins").textContent=w;
+document.getElementById("losses").textContent=l;
+document.getElementById("rate").textContent=r+"%";
 
 }
 
 
-/* =================================
-   CHECK PREVIOUS SIGNAL
-================================= */
-
-function checkPreviousSignal(currentPrice){
-
-let history=getHistory();
-
-if(history.length===0)return;
-
-let item=history[0];
-
-if(item.result!=="PENDING")return;
-
-let entry=Number(item.entry);
-
-let price=Number(currentPrice);
-
-let result="";
-
-if(item.signal==="CALL"){
-
-if(price>entry){
-result="WIN";
-}else if(price<entry){
-result="LOSS";
-}
-
-}
-
-if(item.signal==="PUT"){
-
-if(price<entry){
-result="WIN";
-}else if(price>entry){
-result="LOSS";
-}
-
-}
-
-if(result){
-
-item.result=result;
-
-item.exit=price.toFixed(5);
-
-history[0]=item;
-
-localStorage.setItem(
-"signalHistory",
-JSON.stringify(history)
-);
-
-showHistory();
-
-updateStats();
-
-}
-
-}
-
-
-/* =================================
-   SHOW HISTORY
-================================= */
+/* History */
 
 function showHistory(){
 
-let history=getHistory();
+let h=getH();
 
-let box=
-document.getElementById("historyList");
+let box=document.getElementById("history");
 
-if(history.length===0){
+if(!h.length){
 
 box.innerHTML="No signals yet";
 return;
 
 }
 
-box.innerHTML=
-history.map(x=>{
+box.innerHTML=h.map(x=>{
 
-let signalClass=
-x.signal==="CALL"
-?"callHistory"
-:"putHistory";
+let sc=x.signal==="CALL"
+?"call":"put";
 
-let resultClass=
+let rc=
 x.result==="WIN"
 ?"win":
 x.result==="LOSS"
-?"loss"
-:"pending";
+?"loss":
+"pending";
 
-let resultText=
+let rt=
 x.result==="WIN"
 ?"✅ WIN":
 x.result==="LOSS"
-?"❌ LOSS"
-:"⏳ PENDING";
+?"❌ LOSS":
+"⏳ PENDING";
 
-return `
+return`
 
-<div class="historyItem">
+<div class="item">
 
-<div class="historyTop">
+<div class="top">
 
-<b class="${signalClass}">
+<b class="${sc}">
 ${x.signal}
 </b>
 
-<b>
-${x.entry}
-</b>
+<b>${x.entry}</b>
 
 </div>
 
-<div class="historyBottom">
+<div class="bottom">
 
 <span>
 ${x.asset} • ${x.time}
 </span>
 
-<span class="${resultClass}">
-${resultText}
+<span class="${rc}">
+${rt}
 </span>
 
 </div>
 
-<div class="historyBottom">
+<div class="bottom">
 
 <span>
 Confidence ${x.confidence}%
@@ -683,376 +560,281 @@ Exit ${x.exit}
 
 }).join("");
 
-}
-
-
-/* =================================
-   STATS
-================================= */
-
-function updateStats(){
-
-let history=getHistory();
-
-let wins=
-history.filter(x=>x.result==="WIN").length;
-
-let losses=
-history.filter(x=>x.result==="LOSS").length;
-
-let total=wins+losses;
-
-let rate=
-total>0
-?Math.round((wins/total)*100)
-:0;
-
-document.getElementById("wins")
-.textContent=wins;
-
-document.getElementById("losses")
-.textContent=losses;
-
-document.getElementById("winrate")
-.textContent=rate+"%";
+stats();
 
 }
 
 
-/* =================================
-   CLEAR
-================================= */
+/* Clear */
 
 function clearHistory(){
 
-localStorage.removeItem("signalHistory");
+localStorage.removeItem("autoSignals");
 
 showHistory();
 
-updateStats();
+stats();
 
 }
 
 
-/* =================================
-   GET DATA
-================================= */
+/* Check old signal */
+
+function checkOld(price){
+
+let h=getH();
+
+if(!h.length)return;
+
+let x=h[0];
+
+if(x.result!=="PENDING")return;
+
+let p=Number(price);
+let e=Number(x.entry);
+
+if(x.signal==="CALL" && p>e){
+x.result="WIN";
+x.exit=p.toFixed(5);
+}
+
+else if(x.signal==="PUT" && p<e){
+x.result="WIN";
+x.exit=p.toFixed(5);
+}
+
+else if(x.signal==="CALL" && p<e){
+x.result="LOSS";
+x.exit=p.toFixed(5);
+}
+
+else if(x.signal==="PUT" && p>e){
+x.result="LOSS";
+x.exit=p.toFixed(5);
+}
+
+else{
+return;
+}
+
+h[0]=x;
+
+localStorage.setItem(
+"autoSignals",
+JSON.stringify(h)
+);
+
+}
+
+
+/* Main */
 
 async function getData(){
 
-const key=
-document.getElementById("apiKey")
-.value.trim();
+let key=
+document.getElementById("api").value.trim();
 
-const asset=
-document.getElementById("asset")
-.value;
-
+let asset=
+document.getElementById("asset").value;
 
 if(!key){
 
-document.getElementById("signal")
-.innerHTML=
+document.getElementById("signal").innerHTML=
 '<span class="wait">⚠️ API KEY پێویستە</span>';
 
 return;
 
 }
 
-
-document.getElementById("status")
-.textContent=
-"🔄 Analyzing market...";
-
+document.getElementById("status").textContent=
+"🔄 ANALYZING...";
 
 try{
 
-const url=
+let url=
 "https://api.twelvedata.com/time_series"+
-"?symbol="+
-encodeURIComponent(asset)+
+"?symbol="+encodeURIComponent(asset)+
 "&interval=1min"+
 "&outputsize=100"+
 "&timezone=UTC"+
-"&apikey="+
-encodeURIComponent(key);
+"&apikey="+encodeURIComponent(key);
 
+let res=await fetch(url);
 
-const response=
-await fetch(url);
-
-const data=
-await response.json();
-
+let data=await res.json();
 
 if(data.status==="error"){
+throw new Error(data.message);
+}
 
-throw new Error(
-data.message||"API error"
-);
-
+if(!data.values || data.values.length<35){
+throw new Error("Not enough data");
 }
 
 
-if(!data.values||
-data.values.length<35){
+/* newest first */
 
-throw new Error(
-"Not enough candle data"
-);
+let c=data.values.slice(1);
 
-}
+let latest=c[0];
 
+let prev=c[1];
 
-/*
-Newest candle may still be forming.
-*/
+let close=c.map(x=>Number(x.close)).reverse();
 
-const candles=
-data.values.slice(1);
+let price=Number(latest.close);
 
-const latest=candles[0];
-const previous=candles[1];
+let open=Number(latest.open);
 
-const closes=
-candles
-.map(x=>Number(x.close))
-.reverse();
+let prevPrice=Number(prev.close);
 
 
-const price=
-Number(latest.close);
+/* Check previous */
 
-const open=
-Number(latest.open);
-
-const previousClose=
-Number(previous.close);
-
-
-/* Check previous signal */
-
-checkPreviousSignal(price);
+checkOld(price);
 
 
 /* Indicators */
 
-const ema9=
-calculateEMA(closes,9);
+let e9=EMA(close,9);
 
-const ema21=
-calculateEMA(closes,21);
+let e21=EMA(close,21);
 
-const RSI=
-calculateRSI(closes);
-
-
-if(
-ema9===null||
-ema21===null||
-RSI===null
-){
-
-throw new Error(
-"Indicator calculation failed"
-);
-
-}
+let rsi=RSI(close,14);
 
 
 /* Candle */
 
-let candleDirection="NEUTRAL";
-
-if(price>open){
-
-candleDirection="BULLISH";
-
-}else if(price<open){
-
-candleDirection="BEARISH";
-
-}
+let candle=
+price>open
+?"BULLISH":
+price<open
+?"BEARISH":
+"NEUTRAL";
 
 
 /* Momentum */
 
-let momentum="NEUTRAL";
-
-if(price>previousClose){
-
-momentum="UP";
-
-}else if(price<previousClose){
-
-momentum="DOWN";
-
-}
+let momentum=
+price>prevPrice
+?"UP":
+price<prevPrice
+?"DOWN":
+"NEUTRAL";
 
 
 /* Trend */
 
-let trend="SIDEWAYS";
-
-if(ema9>ema21){
-
-trend="UP";
-
-}else if(ema9<ema21){
-
-trend="DOWN";
-
-}
+let trend=
+e9>e21
+?"UP":
+e9<e21
+?"DOWN":
+"SIDEWAYS";
 
 
-/* Score */
+/* Scores */
 
-let callScore=0;
-let putScore=0;
+let call=0;
+let put=0;
 
 
 /* EMA */
 
-if(ema9>ema21){
-
-callScore+=2;
-
-}else if(ema9<ema21){
-
-putScore+=2;
-
-}
+if(e9>e21)call+=2;
+if(e9<e21)put+=2;
 
 
 /* Price */
 
-if(price>ema21){
-
-callScore+=1;
-
-}else if(price<ema21){
-
-putScore+=1;
-
-}
+if(price>e21)call+=1;
+if(price<e21)put+=1;
 
 
 /* RSI */
 
-if(RSI>=52&&RSI<=68){
+if(rsi>=52 && rsi<=68)call+=2;
 
-callScore+=2;
-
-}else if(RSI>=32&&RSI<=48){
-
-putScore+=2;
-
-}
+if(rsi>=32 && rsi<=48)put+=2;
 
 
 /* Momentum */
 
-if(momentum==="UP"){
-
-callScore+=1;
-
-}else if(momentum==="DOWN"){
-
-putScore+=1;
-
-}
+if(momentum==="UP")call+=1;
+if(momentum==="DOWN")put+=1;
 
 
 /* Candle */
 
-if(candleDirection==="BULLISH"){
-
-callScore+=1;
-
-}else if(candleDirection==="BEARISH"){
-
-putScore+=1;
-
-}
+if(candle==="BULLISH")call+=1;
+if(candle==="BEARISH")put+=1;
 
 
 /* Signal */
 
 let signal="WAIT";
-let className="wait";
+let cls="wait";
 let confidence=55;
 let strength="WEAK";
 
-const difference=
-Math.abs(callScore-putScore);
+let diff=Math.abs(call-put);
 
 
-if(
-callScore>=5&&
-callScore>putScore
-){
+/* Strong confirmation */
+
+if(call>=5 && call>put){
 
 signal="CALL";
-className="up";
+cls="up";
 
 confidence=
-70+
-Math.min(difference*4,15);
+70+Math.min(diff*4,15);
 
 strength=
-callScore>=7
+call>=7
 ?"STRONG"
 :"MEDIUM";
 
 }
 
-
-else if(
-putScore>=5&&
-putScore>callScore
-){
+else if(put>=5 && put>call){
 
 signal="PUT";
-className="down";
+cls="down";
 
 confidence=
-70+
-Math.min(difference*4,15);
+70+Math.min(diff*4,15);
 
 strength=
-putScore>=7
+put>=7
 ?"STRONG"
 :"MEDIUM";
 
 }
 
 
-/* Display */
+/* Signal box */
 
-document.getElementById("signal")
-.innerHTML=
+document.getElementById("signal").innerHTML=
 
-'<div>NEW SIGNAL</div>'+
+"<div>NEW SIGNAL</div>"+
 
-'<b class="'+className+'">'+
-
+'<b class="'+cls+'">'+
 (
 signal==="CALL"
-?"🟢 "
-:
+?"🟢 CALL":
 signal==="PUT"
-?"🔴 "
-:"🟡 "
+?"🔴 PUT":
+"🟡 WAIT"
 )+
+"</b>"+
 
-signal+
-
-'</b>'+
-
-'<div>Confidence: '+
+"<div>Confidence: "+
 confidence+
-'%</div>';
+"%</div>";
 
+
+/* Values */
 
 document.getElementById("entry")
 .textContent=price.toFixed(5);
@@ -1061,19 +843,19 @@ document.getElementById("price")
 .textContent=price.toFixed(5);
 
 document.getElementById("rsi")
-.textContent=RSI.toFixed(1);
+.textContent=rsi.toFixed(1);
 
 document.getElementById("ema9")
-.textContent=ema9.toFixed(5);
+.textContent=e9.toFixed(5);
 
 document.getElementById("ema21")
-.textContent=ema21.toFixed(5);
+.textContent=e21.toFixed(5);
 
 document.getElementById("trend")
 .textContent=trend;
 
 document.getElementById("candle")
-.textContent=candleDirection;
+.textContent=candle;
 
 document.getElementById("momentum")
 .textContent=momentum;
@@ -1082,8 +864,7 @@ document.getElementById("strength")
 .textContent=strength;
 
 document.getElementById("score")
-.textContent=
-callScore+" / "+putScore;
+.textContent=call+" / "+put;
 
 document.getElementById("status")
 .textContent=
@@ -1091,24 +872,40 @@ document.getElementById("status")
 new Date().toLocaleTimeString();
 
 
-/* Save only CALL / PUT */
+/* Save */
 
-saveHistory(
-signal,
-price,
-confidence
-);
+if(signal!=="WAIT"){
 
+saveH({
 
-seconds=60;
+signal:signal,
+
+entry:price.toFixed(5),
+
+confidence:confidence,
+
+asset:asset,
+
+time:new Date().toLocaleTimeString(),
+
+result:"PENDING",
+
+exit:"—"
+
+});
 
 }
 
-catch(error){
+showHistory();
+
+sec=60;
+
+}
+
+catch(err){
 
 document.getElementById("status")
-.textContent=
-"❌ "+error.message;
+.textContent="❌ "+err.message;
 
 document.getElementById("signal")
 .innerHTML=
@@ -1119,34 +916,25 @@ document.getElementById("signal")
 }
 
 
-/* =================================
-   START / STOP
-================================= */
+/* Start / Stop */
 
-function toggleAuto(){
+function toggle(){
 
-const button=
-document.getElementById("startBtn");
-
+let btn=document.getElementById("start");
 
 if(timer){
 
 clearInterval(timer);
-clearInterval(countdownTimer);
+clearInterval(clock);
 
 timer=null;
-countdownTimer=null;
+clock=null;
 
-button.textContent=
-"▶ START AUTO SIGNAL";
+btn.textContent="▶ START AUTO SIGNAL";
+btn.className="";
 
-button.className="";
-
-document.getElementById("status")
-.textContent="Stopped";
-
-document.getElementById("countdown")
-.textContent="";
+document.getElementById("count").textContent="";
+document.getElementById("status").textContent="Stopped";
 
 return;
 
@@ -1157,46 +945,33 @@ return;
 
 getData();
 
-seconds=60;
+sec=60;
 
-
-timer=setInterval(
-function(){
+timer=setInterval(()=>{
 
 getData();
 
-seconds=60;
+sec=60;
 
-},
-60000
-);
+},60000);
 
 
-countdownTimer=setInterval(
-function(){
+clock=setInterval(()=>{
 
-if(seconds>0){
-seconds--;
-}
+if(sec>0)sec--;
 
-document.getElementById("countdown")
+document.getElementById("count")
 .textContent=
-"⏱️ Next analysis: "+
-seconds+"s";
+"⏱️ Next analysis: "+sec+"s";
 
-},
-1000
-);
+},1000);
 
 
-button.textContent=
-"■ STOP AUTO SIGNAL";
-
-button.className="stop";
+btn.textContent="■ STOP AUTO SIGNAL";
+btn.className="stop";
 
 document.getElementById("status")
-.textContent=
-"🟢 AUTO SIGNAL STARTED";
+.textContent="🟢 AUTO SIGNAL STARTED";
 
 }
 
@@ -1204,7 +979,7 @@ document.getElementById("status")
 /* Load */
 
 showHistory();
-updateStats();
+stats();
 
 </script>
 
