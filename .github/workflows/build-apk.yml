@@ -14,8 +14,14 @@ jobs:
       - name: Extract project
         run: |
           unzip -o "AutoPocketSignalAPK (1).zip" -d project
-          echo "android.useAndroidX=true" >> project/gradle.properties
-          echo "android.enableJetifier=true" >> project/gradle.properties
+
+          sed -i '/appcompat/d' project/app/build.gradle
+
+          sed -i 's#android:theme="@style/Theme.AppCompat.NoActionBar"#android:theme="@android:style/Theme.Material.Light.NoActionBar"#' project/app/src/main/AndroidManifest.xml
+
+          rm -f project/gradle.properties
+          echo "android.useAndroidX=false" >> project/gradle.properties
+          echo "android.enableJetifier=false" >> project/gradle.properties
 
       - name: Setup Java
         uses: actions/setup-java@v5
