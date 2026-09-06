@@ -15,8 +15,56 @@ jobs:
         run: |
           unzip -o "AutoPocketSignalAPK (1).zip" -d project
 
+      - name: Fix Android project
+        run: |
+          cat > project/settings.gradle <<'EOF'
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AutoPocketSignal"
+include(":app")
+EOF
+
+          cat > project/build.gradle <<'EOF'
+plugins {
+    id 'com.android.application' version '8.6.1' apply false
+}
+EOF
+
+          cat > project/app/build.gradle <<'EOF'
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pocket.signal'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.pocket.signal'
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+}
+EOF
+
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
