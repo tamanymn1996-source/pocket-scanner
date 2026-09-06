@@ -1,4 +1,73 @@
-padding:24px 15px;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Auto Pocket Signal PRO</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#05070a;
+ color:#fff;
+ font-family:Arial,sans-serif
+}
+.wrap{
+ max-width:520px;
+ margin:auto;
+ padding:20px 12px
+}
+.card{
+ background:#11151c;
+ border-radius:20px;
+ padding:20px;
+ box-shadow:0 10px 30px rgba(0,0,0,.35)
+}
+h1{
+ text-align:center;
+ font-size:25px;
+ margin:5px 0 8px
+}
+.sub{
+ text-align:center;
+ color:#9ca3af;
+ margin-bottom:20px
+}
+label{
+ display:block;
+ margin:12px 0 7px;
+ color:#ddd;
+ font-weight:bold
+}
+input,select{
+ width:100%;
+ padding:14px;
+ border:1px solid #374151;
+ border-radius:12px;
+ background:#080b10;
+ color:#fff;
+ font-size:16px;
+ outline:none
+}
+button{
+ width:100%;
+ padding:15px;
+ margin-top:15px;
+ border:0;
+ border-radius:12px;
+ background:#2563eb;
+ color:white;
+ font-size:16px;
+ font-weight:bold
+}
+button.stop{background:#dc2626}
+
+.signal{
+ margin-top:18px;
+ background:#0b0e13;
+ border-radius:18px;
+ padding:24px 15px;
  text-align:center
 }
 .signal-title{
@@ -13,7 +82,6 @@ padding:24px 15px;
 .call{color:#22c55e}
 .put{color:#ef4444}
 .wait{color:#f59e0b}
-
 .conf{
  font-size:19px;
  color:#ddd
@@ -132,7 +200,10 @@ small{
 <input id="apiKey" type="password" placeholder="Paste your API key">
 
 <label>💱 Asset</label>
+
 <select id="asset">
+
+<!-- MAJOR -->
 <option value="EUR/USD">EUR/USD</option>
 <option value="GBP/USD">GBP/USD</option>
 <option value="USD/JPY">USD/JPY</option>
@@ -140,27 +211,55 @@ small{
 <option value="USD/CAD">USD/CAD</option>
 <option value="USD/CHF">USD/CHF</option>
 <option value="NZD/USD">NZD/USD</option>
+
+<!-- EUR -->
 <option value="EUR/GBP">EUR/GBP</option>
 <option value="EUR/JPY">EUR/JPY</option>
 <option value="EUR/AUD">EUR/AUD</option>
 <option value="EUR/CAD">EUR/CAD</option>
 <option value="EUR/CHF">EUR/CHF</option>
 <option value="EUR/NZD">EUR/NZD</option>
+<option value="EUR/NOK">EUR/NOK</option>
+<option value="EUR/SEK">EUR/SEK</option>
+<option value="EUR/DKK">EUR/DKK</option>
+<option value="EUR/PLN">EUR/PLN</option>
+<option value="EUR/TRY">EUR/TRY</option>
+<option value="EUR/ZAR">EUR/ZAR</option>
+
+<!-- GBP -->
 <option value="GBP/JPY">GBP/JPY</option>
 <option value="GBP/AUD">GBP/AUD</option>
 <option value="GBP/CAD">GBP/CAD</option>
 <option value="GBP/CHF">GBP/CHF</option>
 <option value="GBP/NZD">GBP/NZD</option>
+<option value="GBP/NOK">GBP/NOK</option>
+<option value="GBP/SEK">GBP/SEK</option>
+<option value="GBP/PLN">GBP/PLN</option>
+<option value="GBP/TRY">GBP/TRY</option>
+<option value="GBP/ZAR">GBP/ZAR</option>
+
+<!-- AUD -->
 <option value="AUD/JPY">AUD/JPY</option>
 <option value="AUD/CAD">AUD/CAD</option>
 <option value="AUD/CHF">AUD/CHF</option>
 <option value="AUD/NZD">AUD/NZD</option>
+<option value="AUD/NOK">AUD/NOK</option>
+<option value="AUD/SEK">AUD/SEK</option>
+
+<!-- CAD -->
 <option value="CAD/JPY">CAD/JPY</option>
 <option value="CAD/CHF">CAD/CHF</option>
+
+<!-- CHF -->
 <option value="CHF/JPY">CHF/JPY</option>
+
+<!-- NZD -->
 <option value="NZD/JPY">NZD/JPY</option>
 <option value="NZD/CAD">NZD/CAD</option>
 <option value="NZD/CHF">NZD/CHF</option>
+<option value="NZD/SGD">NZD/SGD</option>
+
+<!-- USD MINOR / EXOTIC -->
 <option value="USD/SGD">USD/SGD</option>
 <option value="USD/HKD">USD/HKD</option>
 <option value="USD/NOK">USD/NOK</option>
@@ -170,23 +269,12 @@ small{
 <option value="USD/TRY">USD/TRY</option>
 <option value="USD/ZAR">USD/ZAR</option>
 <option value="USD/MXN">USD/MXN</option>
-<option value="EUR/NOK">EUR/NOK</option>
-<option value="EUR/SEK">EUR/SEK</option>
-<option value="EUR/DKK">EUR/DKK</option>
-<option value="EUR/PLN">EUR/PLN</option>
-<option value="EUR/TRY">EUR/TRY</option>
-<option value="EUR/ZAR">EUR/ZAR</option>
-<option value="GBP/NOK">GBP/NOK</option>
-<option value="GBP/SEK">GBP/SEK</option>
-<option value="GBP/PLN">GBP/PLN</option>
-<option value="GBP/TRY">GBP/TRY</option>
-<option value="GBP/ZAR">GBP/ZAR</option>
-<option value="AUD/NOK">AUD/NOK</option>
-<option value="AUD/SEK">AUD/SEK</option>
-<option value="NZD/SGD">NZD/SGD</option>
+
+<!-- OTHER CROSSES -->
 <option value="SGD/JPY">SGD/JPY</option>
 <option value="HKD/JPY">HKD/JPY</option>
 <option value="NOK/SEK">NOK/SEK</option>
+
 </select>
 
 <button id="startBtn" onclick="toggleAuto()">
@@ -329,13 +417,15 @@ let timer=null;
 let countdownTimer=null;
 let seconds=60;
 let running=false;
-let lastSignal=null;
 
-let history =
-JSON.parse(localStorage.getItem("signalHistory") || "[]");
+let history=
+JSON.parse(localStorage.getItem("signalHistory")||"[]");
 
-let stats =
-JSON.parse(localStorage.getItem("signalStats") || '{"wins":0,"losses":0}');
+let stats=
+JSON.parse(
+localStorage.getItem("signalStats")||
+'{"wins":0,"losses":0}'
+);
 
 updateStats();
 renderHistory();
@@ -347,7 +437,7 @@ renderHistory();
 
 function EMA(values,period){
 
- if(values.length<period) return null;
+ if(values.length<period)return null;
 
  let sum=0;
 
@@ -359,9 +449,7 @@ function EMA(values,period){
  let multiplier=2/(period+1);
 
  for(let i=period;i<values.length;i++){
-
   ema=(values[i]-ema)*multiplier+ema;
-
  }
 
  return ema;
@@ -374,7 +462,7 @@ function EMA(values,period){
 
 function RSI(values,period=14){
 
- if(values.length<period+1) return null;
+ if(values.length<period+1)return null;
 
  let gains=0;
  let losses=0;
@@ -383,9 +471,8 @@ function RSI(values,period=14){
 
   let diff=values[i]-values[i-1];
 
-  if(diff>0) gains+=diff;
+  if(diff>0)gains+=diff;
   else losses+=Math.abs(diff);
-
  }
 
  let avgGain=gains/period;
@@ -400,10 +487,9 @@ function RSI(values,period=14){
 
   avgGain=((avgGain*(period-1))+gain)/period;
   avgLoss=((avgLoss*(period-1))+loss)/period;
-
  }
 
- if(avgLoss===0) return 100;
+ if(avgLoss===0)return 100;
 
  let rs=avgGain/avgLoss;
 
@@ -420,14 +506,14 @@ function MACD(values){
  let e12=EMA(values,12);
  let e26=EMA(values,26);
 
- if(e12===null || e26===null) return null;
+ if(e12===null||e26===null)return null;
 
  return e12-e26;
 }
 
 
 /* =========================
-   GET MARKET DATA
+   MARKET DATA
 ========================= */
 
 async function getData(){
@@ -462,23 +548,17 @@ async function getData(){
   "&apikey="+encodeURIComponent(key);
 
   const response=await fetch(url);
-
   const data=await response.json();
 
   if(data.status==="error"){
-   throw new Error(data.message || "API error");
+   throw new Error(data.message||"API error");
   }
 
-  if(!data.values || data.values.length<50){
+  if(!data.values||data.values.length<50){
    throw new Error("Not enough market data");
   }
 
-
-  /*
-   Newest candle may still be forming.
-   We use completed candles.
-  */
-
+  /* Ignore newest forming candle */
   const candles=data.values.slice(1);
 
   const ordered=[...candles].reverse();
@@ -495,24 +575,18 @@ async function getData(){
   const lows=
   ordered.map(x=>Number(x.low));
 
-
   const price=closes[closes.length-1];
-
   const previous=closes[closes.length-2];
 
   const ema9=EMA(closes,9);
-
   const ema21=EMA(closes,21);
-
   const rsi=RSI(closes,14);
-
   const macd=MACD(closes);
 
-
   if(
-   ema9===null ||
-   ema21===null ||
-   rsi===null ||
+   ema9===null||
+   ema21===null||
+   rsi===null||
    macd===null
   ){
    throw new Error("Indicator calculation failed");
@@ -547,19 +621,18 @@ async function getData(){
 
   /* RSI */
 
-  if(rsi>=52 && rsi<=68){
+  if(rsi>=52&&rsi<=68){
    bull++;
   }
 
-  if(rsi>=32 && rsi<=48){
+  if(rsi>=32&&rsi<=48){
    bear++;
   }
 
 
   /* MOMENTUM */
 
-  const momentum=
-  price-previous;
+  const momentum=price-previous;
 
   if(momentum>0){
    bull++;
@@ -591,15 +664,11 @@ async function getData(){
   /* CANDLE */
 
   const open=opens[opens.length-1];
-
   const high=highs[highs.length-1];
-
   const low=lows[lows.length-1];
-
   const close=closes[closes.length-1];
 
   const body=Math.abs(close-open);
-
   const range=high-low;
 
   let candle="NEUTRAL";
@@ -608,20 +677,15 @@ async function getData(){
 
    const bodyRatio=body/range;
 
-   if(close>open && bodyRatio>=0.45){
-
+   if(close>open&&bodyRatio>=0.45){
     candle="BULLISH";
     bull++;
-
    }
 
-   if(close<open && bodyRatio>=0.45){
-
+   if(close<open&&bodyRatio>=0.45){
     candle="BEARISH";
     bear++;
-
    }
-
   }
 
 
@@ -629,21 +693,14 @@ async function getData(){
      SIGNAL
   ========================= */
 
-  const total=bull+bear;
-
   let signal="WAIT";
-
   let confidence=55;
-
   let strength="WEAK";
 
-  /*
-   Require stronger agreement.
-  */
 
   if(
-   bull>=6 &&
-   bull-bear>=3 &&
+   bull>=6&&
+   bull-bear>=3&&
    rsi<70
   ){
 
@@ -653,9 +710,10 @@ async function getData(){
    Math.min(92,70+(bull-bear)*5);
 
   }
+
   else if(
-   bear>=6 &&
-   bear-bull>=3 &&
+   bear>=6&&
+   bear-bull>=3&&
    rsi>30
   ){
 
@@ -665,23 +723,12 @@ async function getData(){
    Math.min(92,70+(bear-bull)*5);
 
   }
-  else{
-
-   signal="WAIT";
-
-   confidence=55;
-
-  }
 
 
-  if(
-   Math.max(bull,bear)>=7
-  ){
+  if(Math.max(bull,bear)>=7){
    strength="STRONG";
   }
-  else if(
-   Math.max(bull,bear)>=5
-  ){
+  else if(Math.max(bull,bear)>=5){
    strength="MEDIUM";
   }
   else{
@@ -693,13 +740,18 @@ async function getData(){
      UPDATE SCREEN
   ========================= */
 
-  setSignal(signal,"",signal==="CALL"?"call":
-                    signal==="PUT"?"put":"wait");
-
+  setSignal(
+   signal,
+   "",
+   signal==="CALL"?
+   "call":
+   signal==="PUT"?
+   "put":
+   "wait"
+  );
 
   document.getElementById("confidence").textContent=
   "Confidence: "+confidence+"%";
-
 
   document.getElementById("price").textContent=
   price.toFixed(5);
@@ -717,19 +769,28 @@ async function getData(){
   ema21.toFixed(5);
 
   document.getElementById("trend").textContent=
-  ema9>ema21?"UP":
-  ema9<ema21?"DOWN":"SIDEWAYS";
+  ema9>ema21?
+  "UP":
+  ema9<ema21?
+  "DOWN":
+  "SIDEWAYS";
 
   document.getElementById("candle").textContent=
   candle;
 
   document.getElementById("momentum").textContent=
-  momentum>0?"UP":
-  momentum<0?"DOWN":"FLAT";
+  momentum>0?
+  "UP":
+  momentum<0?
+  "DOWN":
+  "FLAT";
 
   document.getElementById("macd").textContent=
-  macd>0?"BULL":
-  macd<0?"BEAR":"FLAT";
+  macd>0?
+  "BULL":
+  macd<0?
+  "BEAR":
+  "FLAT";
 
   document.getElementById("strength").textContent=
   strength;
@@ -737,15 +798,12 @@ async function getData(){
   document.getElementById("score").textContent=
   bull+" / "+bear;
 
-
   document.getElementById("status").textContent=
   "🟢 LIVE • Updated "+
   new Date().toLocaleTimeString();
 
 
-  /*
-   Save only real CALL/PUT signals.
-  */
+  /* SAVE CALL / PUT */
 
   if(signal!=="WAIT"){
 
@@ -760,16 +818,15 @@ async function getData(){
 
   }
 
+ }
 
- }catch(error){
+ catch(error){
 
   document.getElementById("status").textContent=
   "❌ "+error.message;
 
   setSignal("WAIT","DATA ERROR","wait");
-
  }
-
 }
 
 
@@ -779,7 +836,8 @@ async function getData(){
 
 function setSignal(signal,msg="",cls="wait"){
 
- const el=document.getElementById("signalMain");
+ const el=
+ document.getElementById("signalMain");
 
  if(signal==="CALL"){
   el.textContent="🟢 CALL";
@@ -796,7 +854,6 @@ function setSignal(signal,msg="",cls="wait"){
  if(msg){
   el.textContent=msg;
  }
-
 }
 
 
@@ -807,15 +864,10 @@ function setSignal(signal,msg="",cls="wait"){
 function toggleAuto(){
 
  if(running){
-
   stopAuto();
-
  }else{
-
   startAuto();
-
  }
-
 }
 
 
@@ -825,11 +877,8 @@ function startAuto(){
  document.getElementById("apiKey").value.trim();
 
  if(!key){
-
   alert("Please enter your Twelve Data API Key");
-
   return;
-
  }
 
  running=true;
@@ -839,7 +888,6 @@ function startAuto(){
 
  document.getElementById("startBtn").className=
  "stop";
-
 
  seconds=60;
 
@@ -854,7 +902,6 @@ function startAuto(){
   getData();
 
  },60000);
-
 }
 
 
@@ -863,11 +910,9 @@ function stopAuto(){
  running=false;
 
  clearInterval(timer);
-
  clearInterval(countdownTimer);
 
  timer=null;
-
  countdownTimer=null;
 
  document.getElementById("startBtn").textContent=
@@ -880,9 +925,12 @@ function stopAuto(){
 
  document.getElementById("status").textContent=
  "⏹ STOPPED";
-
 }
 
+
+/* =========================
+   COUNTDOWN
+========================= */
 
 function startCountdown(){
 
@@ -900,7 +948,6 @@ function startCountdown(){
   "⏱ Next analysis: "+seconds+"s";
 
  },1000);
-
 }
 
 
@@ -910,13 +957,9 @@ function startCountdown(){
 
 function addSignal(item){
 
- /*
-  Avoid duplicate signal at same second.
- */
-
  if(
-  history.length &&
-  history[0].time===item.time &&
+  history.length&&
+  history[0].time===item.time&&
   history[0].signal===item.signal
  ){
   return;
@@ -934,7 +977,6 @@ function addSignal(item){
  );
 
  renderHistory();
-
 }
 
 
@@ -951,17 +993,19 @@ function renderHistory(){
   return;
  }
 
-
  box.innerHTML=
- history.map((x,i)=>{
+ history.map(x=>{
 
   const color=
-  x.signal==="CALL"?"call":"put";
+  x.signal==="CALL"?
+  "call":
+  "put";
 
   return `
   <div class="hist">
 
    <div>
+
     <div class="sig ${color}">
      ${x.signal}
     </div>
@@ -973,11 +1017,14 @@ function renderHistory(){
     <div class="info">
      Confidence ${x.confidence}%
     </div>
+
    </div>
 
    <div style="text-align:right">
 
-    <strong>${Number(x.price).toFixed(5)}</strong>
+    <strong>
+     ${Number(x.price).toFixed(5)}
+    </strong>
 
     <div class="pending">
      ⏳ ${x.status}
@@ -989,7 +1036,6 @@ function renderHistory(){
   `;
 
  }).join("");
-
 }
 
 
@@ -1012,7 +1058,6 @@ function updateStats(){
  total?
  Math.round(stats.wins/total*100)+"%":
  "0%";
-
 }
 
 
@@ -1027,18 +1072,16 @@ function clearHistory(){
  localStorage.removeItem("signalHistory");
 
  renderHistory();
-
 }
 
 
 /* =========================
-   AUTO STOP WHEN TAB CLOSED
+   AUTO STOP
 ========================= */
 
 window.addEventListener("beforeunload",()=>{
 
  clearInterval(timer);
-
  clearInterval(countdownTimer);
 
 });
