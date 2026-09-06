@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pocket Broker Signal</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f1115;color:#fff;font-family:Arial,sans-serif}.wrap{max-width:520px;margin:auto;padding:18px}.card{background:#191d24;border:1px solid #303640;border-radius:18px;padding:18px}h1{text-align:center;margin:8px 0 4px}.sub{text-align:center;color:#aaa;margin-bottom:18px}label{display:block;color:#bbb;margin:12px 0 6px}input,select,button{width:100%;padding:13px;border-radius:11px;border:1px solid #39404c;font-size:16px}input,select{background:#0f1115;color:#fff}button{margin-top:16px;background:#2563eb;color:#fff;border:0;font-weight:bold}.signal{margin-top:18px;text-align:center;padding:20px;border-radius:15px;background:#0f1115}.signal b{font-size:32px;display:block;margin:8px}.up{color:#22c55e}.down{color:#ef4444}.wait{color:#f59e0b}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.box{background:#0f1115;padding:12px;border-radius:10px;text-align:center;color:#bbb}.box strong{display:block;color:#fff;font-size:18px;margin-top:4px}small{display:block;color:#888;text-align:center;margin-top:14px;line-height:1.5}
+</style></head><body><div class="wrap"><div class="card">
+<h1>📊 Pocket Broker Signal</h1><div class="sub">Simple technical signal analyzer</div>
+<label>Asset</label><input id="asset" value="EUR/USD">
+<label>Current Price</label><input id="price" type="number" step="any" placeholder="1.0850">
+<label>Previous Price</label><input id="prev" type="number" step="any" placeholder="1.0840">
+<label>RSI (0–100)</label><input id="rsi" type="number" min="0" max="100" value="50">
+<label>EMA 9</label><input id="ema9" type="number" step="any" placeholder="1.0850">
+<label>EMA 21</label><input id="ema21" type="number" step="any" placeholder="1.0840">
+<label>Timeframe</label><select id="tf"><option>1 MIN</option><option>5 MIN</option><option>15 MIN</option></select>
+<button onclick="analyze()">🔎 GENERATE SIGNAL</button>
+<div class="signal" id="signal">Result will appear here</div>
+<div class="grid"><div class="box">Asset<strong id="a">—</strong></div><div class="box">Timeframe<strong id="t">—</strong></div><div class="box">RSI<strong id="r">—</strong></div><div class="box">Trend<strong id="trend">—</strong></div></div>
+<small>⚠️ Technical analysis only; signals are not guaranteed profits.</small>
+</div></div>
+<script>
+function analyze(){const p=+price.value,pr=+prev.value,r=+rsi.value,e9=+ema9.value,e21=+ema21.value;if(!p||!pr||!e9||!e21||r<0||r>100){signal.innerHTML='<span class="wait">⚠️ Enter all values</span>';return}let s=(p>pr?1:-1)+(e9>e21?1:-1)+(r>50&&r<70?1:r<50&&r>30?-1:0),txt='WAIT',cl='wait',cf=55;if(s>=2){txt='CALL';cl='up';cf=70}else if(s<=-2){txt='PUT';cl='down';cf=70}signal.innerHTML='<div>Signal</div><b class="'+cl+'">'+(txt==='CALL'?'🟢 ':txt==='PUT'?'🔴 ':'🟡 ')+txt+'</b><div>Confidence: '+cf+'%</div>';a.textContent=asset.value||'—';t.textContent=tf.value;r.textContent=r;trend.textContent=s>0?'UP':s<0?'DOWN':'SIDEWAYS'}
+</script></body></html>
