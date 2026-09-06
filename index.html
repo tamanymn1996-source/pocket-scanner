@@ -21,19 +21,19 @@
     .container {
       max-width: 520px;
       margin: auto;
-      padding: 22px 16px;
+      padding: 20px 16px;
     }
 
     h1 {
       text-align: center;
       margin: 10px 0;
-      font-size: 32px;
+      font-size: 30px;
     }
 
     .subtitle {
       text-align: center;
       color: #aaa;
-      margin-bottom: 25px;
+      margin-bottom: 22px;
     }
 
     .scanner {
@@ -41,6 +41,18 @@
       border: 1px solid #303640;
       border-radius: 18px;
       padding: 16px;
+    }
+
+    .preview {
+      height: 300px;
+      border: 2px dashed #555;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      text-align: center;
+      line-height: 1.6;
     }
 
     video {
@@ -59,26 +71,15 @@
       margin-top: 15px;
     }
 
-    .preview {
-      height: 300px;
-      border: 2px dashed #555;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #888;
-      text-align: center;
-    }
-
     button {
       width: 100%;
-      padding: 15px;
-      margin-top: 15px;
+      padding: 14px;
+      margin-top: 12px;
       border: 0;
       border-radius: 12px;
       background: #238636;
       color: white;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
     }
 
@@ -87,13 +88,16 @@
     }
 
     #captureBtn,
-    #stopBtn {
+    #stopBtn,
+    #retakeBtn,
+    #downloadBtn,
+    #cleanBtn {
       display: none;
     }
 
     #result {
-      margin-top: 18px;
-      padding: 15px;
+      margin-top: 16px;
+      padding: 14px;
       background: #11151b;
       border-radius: 12px;
       color: #ccc;
@@ -131,6 +135,18 @@
         📸 Capture Document
       </button>
 
+      <button id="retakeBtn" onclick="retakePhoto()">
+        🔄 Retake
+      </button>
+
+      <button id="cleanBtn" onclick="cleanImage()">
+        ✨ Clean Image
+      </button>
+
+      <button id="downloadBtn" onclick="downloadPhoto()">
+        ⬇️ Download
+      </button>
+
       <button id="stopBtn" onclick="stopScanner()">
         ⛔ Stop Camera
       </button>
@@ -144,10 +160,13 @@
   </div>
 
   <script>
+
     let stream = null;
 
     async function startScanner() {
+
       try {
+
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: "environment"
@@ -171,12 +190,17 @@
           "Camera started. Place your document inside the frame.";
 
       } catch (error) {
+
         document.getElementById("result").innerText =
           "Camera permission was denied or camera is unavailable.";
+
       }
+
     }
 
+
     function capturePhoto() {
+
       const video = document.getElementById("camera");
       const canvas = document.getElementById("canvas");
 
@@ -184,18 +208,111 @@
       canvas.height = video.videoHeight;
 
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
 
       canvas.style.display = "block";
 
+      document.getElementById("camera").style.display = "none";
+      document.getElementById("captureBtn").style.display = "none";
+
+      document.getElementById("retakeBtn").style.display = "block";
+      document.getElementById("cleanBtn").style.display = "block";
+      document.getElementById("downloadBtn").style.display = "block";
+
       document.getElementById("result").innerText =
         "Document captured successfully.";
+
     }
 
+
+    function retakePhoto() {
+
+      const video = document.getElementById("camera");
+      const canvas = document.getElementById("canvas");
+
+      canvas.style.display = "none";
+      video.style.display = "block";
+
+      document.getElementById("captureBtn").style.display = "block";
+
+      document.getElementById("retakeBtn").style.display = "none";
+      document.getElementById("cleanBtn").style.display = "none";
+      document.getElementById("downloadBtn").style.display = "none";
+
+      document.getElementById("result").innerText =
+        "Ready. Take another photo.";
+
+    }
+
+
+    function cleanImage() {
+
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const imageData = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+
+        const average =
+          (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+        data[i] = average;
+        data[i + 1] = average;
+        data[i + 2] = average;
+
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+
+      document.getElementById("result").innerText =
+        "✨ Image cleaned and converted to grayscale.";
+
+    }
+
+
+    function downloadPhoto() {
+
+      const canvas = document.getElementById("canvas");
+
+      const link = document.createElement("a");
+
+      link.download = "pocket-scanner-document.png";
+
+      link.href = canvas.toDataURL("image/png");
+
+      link.click();
+
+      document.getElementById("result").innerText =
+        "⬇️ Document downloaded.";
+
+    }
+
+
     function stopScanner() {
+
       if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+
+        stream.getTracks().forEach(
+          track => track.stop()
+        );
+
         stream = null;
+
       }
 
       document.getElementById("camera").style.display = "none";
@@ -204,11 +321,16 @@
 
       document.getElementById("startBtn").style.display = "block";
       document.getElementById("captureBtn").style.display = "none";
+      document.getElementById("retakeBtn").style.display = "none";
+      document.getElementById("cleanBtn").style.display = "none";
+      document.getElementById("downloadBtn").style.display = "none";
       document.getElementById("stopBtn").style.display = "none";
 
       document.getElementById("result").innerText =
         "Scanner ready.";
+
     }
+
   </script>
 
 </body>
