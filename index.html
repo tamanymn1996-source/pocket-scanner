@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto Pocket Signal PRO</title>
+<title>Auto Pocket Signal PRO+</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
 margin:0;
-background:#0b0e13;
+background:#080b10;
 color:#fff;
 font-family:Arial,sans-serif
 }
@@ -18,20 +18,20 @@ font-family:Arial,sans-serif
 .wrap{
 max-width:560px;
 margin:auto;
-padding:16px
+padding:15px
 }
 
 .card{
 background:#181d25;
-border:1px solid #303744;
+border:1px solid #343b47;
 border-radius:20px;
 padding:18px
 }
 
 h1{
 text-align:center;
-margin:6px 0;
-font-size:30px
+margin:5px 0;
+font-size:29px
 }
 
 .sub{
@@ -42,7 +42,7 @@ margin-bottom:18px
 
 label{
 display:block;
-color:#c5cad3;
+color:#c8ccd3;
 margin:12px 0 6px
 }
 
@@ -64,7 +64,7 @@ margin-top:16px;
 background:#2563eb;
 color:#fff;
 border:0;
-font-weight:700
+font-weight:bold
 }
 
 button.stop{
@@ -74,15 +74,15 @@ background:#dc2626
 .signal{
 margin-top:18px;
 text-align:center;
-padding:20px;
+padding:22px;
 border-radius:16px;
 background:#0d1015
 }
 
 .signal b{
-font-size:38px;
+font-size:42px;
 display:block;
-margin:7px
+margin:8px
 }
 
 .up{color:#22c55e}
@@ -113,23 +113,23 @@ margin-top:5px
 
 .status{
 text-align:center;
-margin-top:13px;
+margin-top:14px;
 color:#60a5fa
 }
 
 .count{
 text-align:center;
 color:#fbbf24;
-margin-top:8px;
-font-weight:bold
+font-weight:bold;
+margin-top:9px
 }
 
 small{
 display:block;
 color:#858b96;
 text-align:center;
-margin-top:14px;
-line-height:1.5
+line-height:1.5;
+margin-top:15px
 }
 </style>
 </head>
@@ -139,10 +139,10 @@ line-height:1.5
 <div class="wrap">
 <div class="card">
 
-<h1>📊 Auto Pocket Signal PRO</h1>
+<h1>📊 Auto Pocket Signal PRO+</h1>
 
 <div class="sub">
-Live 1-Minute Technical Signal
+Smart 1-Minute Technical Signal
 </div>
 
 <label>🔑 Twelve Data API Key</label>
@@ -183,7 +183,7 @@ Price
 
 <div class="box">
 Asset
-<strong id="a">—</strong>
+<strong id="assetShow">—</strong>
 </div>
 
 <div class="box">
@@ -207,13 +207,23 @@ Trend
 </div>
 
 <div class="box">
+Candle
+<strong id="candle">—</strong>
+</div>
+
+<div class="box">
+Momentum
+<strong id="momentum">—</strong>
+</div>
+
+<div class="box">
 Strength
 <strong id="strength">—</strong>
 </div>
 
 <div class="box">
-Updated
-<strong id="updated">—</strong>
+Score
+<strong id="score">—</strong>
 </div>
 
 </div>
@@ -224,12 +234,13 @@ Not started
 
 <small>
 ⚠️ Technical estimates only.
-No signal guarantees profit.
-This app generates signals only and does not place trades.
+No strategy guarantees profit.
+Signals are not financial advice.
 </small>
 
 </div>
 </div>
+
 
 <script>
 
@@ -238,88 +249,122 @@ let countdownTimer=null;
 let seconds=0;
 
 
-/* EMA */
+/* =========================
+   EMA
+========================= */
 
-function ema(v,p){
+function calculateEMA(values,period){
 
-if(v.length<p)return null;
+if(values.length<period){
+return null;
+}
 
-let e=
-v.slice(0,p)
-.reduce((a,b)=>a+b,0)/p;
+let ema=
+values
+.slice(0,period)
+.reduce((a,b)=>a+b,0)/period;
 
-let m=2/(p+1);
+let multiplier=
+2/(period+1);
 
-for(let i=p;i<v.length;i++){
+for(let i=period;i<values.length;i++){
 
-e=(v[i]-e)*m+e;
+ema=
+((values[i]-ema)*multiplier)+ema;
 
 }
 
-return e;
+return ema;
 
 }
 
 
-/* RSI */
+/* =========================
+   RSI
+========================= */
 
-function rsi(v,p=14){
+function calculateRSI(values,period=14){
 
-if(v.length<p+1)return null;
+if(values.length<period+1){
+return null;
+}
 
-let g=0;
-let l=0;
+let gains=0;
+let losses=0;
 
-for(let i=1;i<=p;i++){
+for(let i=1;i<=period;i++){
 
-let d=v[i]-v[i-1];
+let diff=
+values[i]-values[i-1];
 
-if(d>0){
-g+=d;
+if(diff>0){
+gains+=diff;
 }else{
-l-=d;
+losses+=Math.abs(diff);
 }
 
 }
 
-let ag=g/p;
-let al=l/p;
+let avgGain=gains/period;
+let avgLoss=losses/period;
 
-for(let i=p+1;i<v.length;i++){
+for(
+let i=period+1;
+i<values.length;
+i++
+){
 
-let d=v[i]-v[i-1];
+let diff=
+values[i]-values[i-1];
 
-let gg=d>0?d:0;
-let ll=d<0?-d:0;
+let gain=
+diff>0?diff:0;
 
-ag=(ag*(p-1)+gg)/p;
-al=(al*(p-1)+ll)/p;
+let loss=
+diff<0?Math.abs(diff):0;
+
+avgGain=
+((avgGain*(period-1))+gain)/period;
+
+avgLoss=
+((avgLoss*(period-1))+loss)/period;
 
 }
 
-if(al===0)return 100;
+if(avgLoss===0){
+return 100;
+}
 
-return 100-100/(1+ag/al);
+let rs=
+avgGain/avgLoss;
+
+return 100-(100/(1+rs));
 
 }
 
 
-/* GET MARKET DATA */
+/* =========================
+   DATA
+========================= */
 
 async function getData(){
 
 const key=
-document.getElementById("apiKey")
-.value.trim();
+document
+.getElementById("apiKey")
+.value
+.trim();
 
 const asset=
-document.getElementById("asset")
+document
+.getElementById("asset")
 .value;
 
 
 if(!key){
 
-document.getElementById("signal")
+document
+.getElementById("signal")
 .innerHTML=
 '<span class="wait">⚠️ API KEY پێویستە</span>';
 
@@ -328,9 +373,10 @@ return;
 }
 
 
-document.getElementById("status")
+document
+.getElementById("status")
 .textContent=
-"🔄 Getting market data...";
+"🔄 Analyzing market...";
 
 
 try{
@@ -362,8 +408,10 @@ data.message||"API error"
 }
 
 
-if(!data.values||
-data.values.length<30){
+if(
+!data.values||
+data.values.length<35
+){
 
 throw new Error(
 "Not enough candle data"
@@ -373,13 +421,21 @@ throw new Error(
 
 
 /*
-Newest candle may still be forming,
-so skip it.
+Newest candle can still be forming.
+Use closed candles.
 */
 
 const candles=
 data.values.slice(1);
 
+
+/* newest closed candle */
+
+const latest=
+candles[0];
+
+const previous=
+candles[1];
 
 const closes=
 candles
@@ -388,19 +444,31 @@ candles
 
 
 const price=
-Number(candles[0].close);
+Number(latest.close);
+
+
+const open=
+Number(latest.open);
+
+const high=
+Number(latest.high);
+
+const low=
+Number(latest.low);
+
+
+const previousClose=
+Number(previous.close);
 
 
 const ema9=
-ema(closes,9);
-
+calculateEMA(closes,9);
 
 const ema21=
-ema(closes,21);
-
+calculateEMA(closes,21);
 
 const RSI=
-rsi(closes);
+calculateRSI(closes);
 
 
 if(
@@ -416,103 +484,240 @@ throw new Error(
 }
 
 
-/* SIGNAL SCORE */
+/* =========================
+   CANDLE
+========================= */
 
-let score=0;
+let candleDirection="NEUTRAL";
+
+if(price>open){
+
+candleDirection="BULLISH";
+
+}
+
+else if(price<open){
+
+candleDirection="BEARISH";
+
+}
 
 
-/* EMA trend */
+/* =========================
+   MOMENTUM
+========================= */
+
+let momentum="NEUTRAL";
+
+if(price>previousClose){
+
+momentum="UP";
+
+}
+
+else if(price<previousClose){
+
+momentum="DOWN";
+
+}
+
+
+/* =========================
+   TREND
+========================= */
+
+let trend="SIDEWAYS";
 
 if(ema9>ema21){
 
-score++;
+trend="UP";
 
-}else if(ema9<ema21){
+}
 
-score--;
+else if(ema9<ema21){
+
+trend="DOWN";
 
 }
 
 
-/* RSI */
+/* =========================
+   SMART SCORE
+========================= */
 
-if(RSI>=50 && RSI<70){
+let callScore=0;
+let putScore=0;
 
-score++;
 
-}else if(RSI<=50 && RSI>30){
+/*
+EMA trend
+*/
 
-score--;
+if(ema9>ema21){
+
+callScore+=2;
+
+}
+
+else if(ema9<ema21){
+
+putScore+=2;
 
 }
 
 
-/* PRICE VS EMA21 */
+/*
+Price vs EMA21
+*/
 
 if(price>ema21){
 
-score++;
+callScore+=1;
 
-}else if(price<ema21){
+}
 
-score--;
+else if(price<ema21){
+
+putScore+=1;
 
 }
 
 
-/* SIGNAL */
+/*
+RSI
+*/
+
+if(RSI>=52 && RSI<=68){
+
+callScore+=2;
+
+}
+
+else if(RSI>=32 && RSI<=48){
+
+putScore+=2;
+
+}
+
+
+/*
+Momentum
+*/
+
+if(momentum==="UP"){
+
+callScore+=1;
+
+}
+
+else if(momentum==="DOWN"){
+
+putScore+=1;
+
+}
+
+
+/*
+Candle confirmation
+*/
+
+if(candleDirection==="BULLISH"){
+
+callScore+=1;
+
+}
+
+else if(candleDirection==="BEARISH"){
+
+putScore+=1;
+
+}
+
+
+/* =========================
+   SIGNAL DECISION
+========================= */
 
 let signal="WAIT";
 let className="wait";
 let confidence=55;
 let strength="WEAK";
 
+const difference=
+Math.abs(callScore-putScore);
 
-if(score>=2){
+
+/*
+CALL
+*/
+
+if(
+callScore>=5 &&
+callScore>putScore
+){
 
 signal="CALL";
 className="up";
 
 confidence=
 70+
-Math.min(score-2,2)*5;
+Math.min(difference*4,15);
 
-strength=
-score>=3?
-"STRONG":
-"MEDIUM";
+if(callScore>=7){
+
+strength="STRONG";
+
+}else{
+
+strength="MEDIUM";
+
+}
 
 }
 
 
-else if(score<=-2){
+/*
+PUT
+*/
+
+else if(
+putScore>=5 &&
+putScore>callScore
+){
 
 signal="PUT";
 className="down";
 
 confidence=
 70+
-Math.min(
--score-2,
-2
-)*5;
+Math.min(difference*4,15);
 
-strength=
--score>=3?
-"STRONG":
-"MEDIUM";
+if(putScore>=7){
+
+strength="STRONG";
+
+}else{
+
+strength="MEDIUM";
+
+}
 
 }
 
 
-/* SHOW SIGNAL */
+/* =========================
+   DISPLAY SIGNAL
+========================= */
 
-document.getElementById("signal")
+document
+.getElementById("signal")
 .innerHTML=
 
 '<div>NEW SIGNAL</div>'+
 
-'<b class="'+className+'">'+
+'<b class="'+
+className+
+'">'+
 
 (
 signal==="CALL"
@@ -532,73 +737,94 @@ confidence+
 '%</div>';
 
 
-/* SHOW DATA */
+/* =========================
+   DISPLAY DATA
+========================= */
 
-document.getElementById("price")
+document
+.getElementById("price")
 .textContent=
 price.toFixed(5);
 
 
-document.getElementById("a")
+document
+.getElementById("assetShow")
 .textContent=
 asset;
 
 
-document.getElementById("rsi")
+document
+.getElementById("rsi")
 .textContent=
 RSI.toFixed(1);
 
 
-document.getElementById("ema9")
+document
+.getElementById("ema9")
 .textContent=
 ema9.toFixed(5);
 
 
-document.getElementById("ema21")
+document
+.getElementById("ema21")
 .textContent=
 ema21.toFixed(5);
 
 
-document.getElementById("trend")
+document
+.getElementById("trend")
 .textContent=
-
-ema9>ema21
-?"UP"
-:
-ema9<ema21
-?"DOWN"
-:"SIDEWAYS";
+trend;
 
 
-document.getElementById("strength")
+document
+.getElementById("candle")
+.textContent=
+candleDirection;
+
+
+document
+.getElementById("momentum")
+.textContent=
+momentum;
+
+
+document
+.getElementById("strength")
 .textContent=
 strength;
 
 
-document.getElementById("updated")
+document
+.getElementById("score")
 .textContent=
+callScore+
+" / "+
+putScore;
+
+
+document
+.getElementById("status")
+.textContent=
+"🟢 LIVE • Updated "+
 new Date()
 .toLocaleTimeString();
 
 
-document.getElementById("status")
-.textContent=
-"🟢 Live • Auto refresh: 60s";
-
-
 seconds=60;
-
 
 }
 
 catch(error){
 
-document.getElementById("status")
+document
+.getElementById("status")
 .textContent=
-"❌ "+error.message;
+"❌ "+
+error.message;
 
-
-document.getElementById("signal")
+document
+.getElementById("signal")
 .innerHTML=
 '<span class="wait">'+
 '⚠️ DATA ERROR'+
@@ -609,12 +835,15 @@ document.getElementById("signal")
 }
 
 
-/* START / STOP */
+/* =========================
+   START / STOP
+========================= */
 
 function toggleAuto(){
 
 const button=
-document.getElementById("startBtn");
+document
+.getElementById("startBtn");
 
 
 /* STOP */
@@ -632,11 +861,13 @@ button.textContent=
 
 button.className="";
 
-document.getElementById("status")
+document
+.getElementById("status")
 .textContent=
 "Stopped";
 
-document.getElementById("countdown")
+document
+.getElementById("countdown")
 .textContent="";
 
 return;
@@ -653,9 +884,12 @@ seconds=60;
 
 timer=
 setInterval(
-()=>{
+function(){
+
 getData();
+
 seconds=60;
+
 },
 60000
 );
@@ -663,15 +897,18 @@ seconds=60;
 
 countdownTimer=
 setInterval(
-()=>{
+function(){
 
 if(seconds>0){
+
 seconds--;
+
 }
 
-document.getElementById("countdown")
+document
+.getElementById("countdown")
 .textContent=
-"Next update: "+
+"⏱️ Next analysis: "+
 seconds+
 "s";
 
@@ -683,10 +920,12 @@ seconds+
 button.textContent=
 "■ STOP AUTO SIGNAL";
 
-button.className="stop";
+button.className=
+"stop";
 
 
-document.getElementById("status")
+document
+.getElementById("status")
 .textContent=
 "🟢 AUTO SIGNAL STARTED";
 
