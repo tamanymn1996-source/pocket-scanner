@@ -125,17 +125,66 @@ font-size:24px;
 margin-top:5px
 }
 
+.count{
+text-align:center;
+color:#fbbf24;
+font-weight:bold;
+font-size:18px;
+margin-top:10px
+}
+
 .status{
 text-align:center;
 margin-top:14px;
 color:#60a5fa
 }
 
-.count{
+.history{
+margin-top:18px;
+background:#0d1015;
+padding:15px;
+border-radius:15px
+}
+
+.history h2{
 text-align:center;
-color:#fbbf24;
-font-weight:bold;
-margin-top:9px
+margin:5px 0 15px
+}
+
+.historyItem{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px;
+margin-top:8px;
+background:#181d25;
+border-radius:10px
+}
+
+.historyItem small{
+margin:0;
+text-align:left;
+color:#888
+}
+
+.callHistory{
+color:#22c55e;
+font-weight:bold
+}
+
+.putHistory{
+color:#ef4444;
+font-weight:bold
+}
+
+.waitHistory{
+color:#f59e0b;
+font-weight:bold
+}
+
+.clearBtn{
+background:#374151;
+font-size:14px
 }
 
 small{
@@ -170,12 +219,12 @@ placeholder="Paste your API key"
 <label>💱 Asset</label>
 
 <select id="asset">
-<option>EUR/USD</option>
-<option>GBP/USD</option>
-<option>USD/JPY</option>
-<option>AUD/USD</option>
-<option>USD/CAD</option>
-<option>USD/CHF</option>
+<option value="EUR/USD">EUR/USD</option>
+<option value="GBP/USD">GBP/USD</option>
+<option value="USD/JPY">USD/JPY</option>
+<option value="AUD/USD">AUD/USD</option>
+<option value="USD/CAD">USD/CAD</option>
+<option value="USD/CHF">USD/CHF</option>
 </select>
 
 <button id="startBtn" onclick="toggleAuto()">
@@ -251,6 +300,22 @@ WAITING...
 Not started
 </div>
 
+<div class="history">
+
+<h2>📜 Signal History</h2>
+
+<div id="historyList">
+No signals yet
+</div>
+
+<button
+onclick="clearHistory()"
+class="clearBtn">
+🗑️ CLEAR HISTORY
+</button>
+
+</div>
+
 <small>
 ⚠️ Technical estimates only.
 No strategy guarantees profit.
@@ -264,7 +329,7 @@ This app generates signals only and does not place trades.
 
 let timer=null;
 let countdownTimer=null;
-let seconds=0;
+let seconds=60;
 
 
 /* =========================
@@ -282,8 +347,7 @@ values
 .slice(0,period)
 .reduce((a,b)=>a+b,0)/period;
 
-let multiplier=
-2/(period+1);
+let multiplier=2/(period+1);
 
 for(let i=period;i<values.length;i++){
 
@@ -352,16 +416,135 @@ if(avgLoss===0){
 return 100;
 }
 
-let rs=
-avgGain/avgLoss;
+let rs=avgGain/avgLoss;
 
 return 100-(100/(1+rs));
+}
+
+
+/* =========================
+   SAVE HISTORY
+========================= */
+
+function saveHistory(signal,price,confidence){
+
+let history=
+JSON.parse(
+localStorage.getItem("signalHistory") || "[]"
+);
+
+history.unshift({
+
+signal:signal,
+
+price:Number(price).toFixed(5),
+
+confidence:confidence,
+
+asset:
+document.getElementById("asset").value,
+
+time:
+new Date().toLocaleTimeString()
+
+});
+
+history=history.slice(0,20);
+
+localStorage.setItem(
+"signalHistory",
+JSON.stringify(history)
+);
+
+showHistory();
+}
+
+
+/* =========================
+   SHOW HISTORY
+========================= */
+
+function showHistory(){
+
+let history=
+JSON.parse(
+localStorage.getItem("signalHistory") || "[]"
+);
+
+let box=
+document.getElementById("historyList");
+
+if(history.length===0){
+
+box.innerHTML="No signals yet";
+
+return;
+
+}
+
+box.innerHTML=
+history.map(x=>{
+
+let cls=
+x.signal==="CALL"
+?"callHistory":
+x.signal==="PUT"
+?"putHistory":
+"waitHistory";
+
+return `
+<div class="historyItem">
+
+<div>
+
+<b class="${cls}">
+${x.signal}
+</b>
+
+<br>
+
+<small>
+${x.asset} • ${x.time}
+</small>
+
+</div>
+
+<div>
+
+<b>
+${x.price}
+</b>
+
+<br>
+
+<small>
+${x.confidence}%
+</small>
+
+</div>
+
+</div>
+`;
+
+}).join("");
+}
+
+
+/* =========================
+   CLEAR HISTORY
+========================= */
+
+function clearHistory(){
+
+localStorage.removeItem("signalHistory");
+
+showHistory();
 
 }
 
 
 /* =========================
-   GET DATA
+   GET MARKET DATA
 ========================= */
 
 async function getData(){
@@ -386,6 +569,7 @@ document
 '<span class="wait">⚠️ API KEY پێویستە</span>';
 
 return;
+
 }
 
 
@@ -436,7 +620,7 @@ throw new Error(
 }
 
 
-/* Closed candles only */
+/* Newest candle may still be forming */
 
 const candles=
 data.values.slice(1);
@@ -567,7 +751,7 @@ putScore+=2;
 }
 
 
-/* Price vs EMA21 */
+/* PRICE VS EMA21 */
 
 if(price>ema21){
 
@@ -597,7 +781,7 @@ putScore+=2;
 }
 
 
-/* Momentum */
+/* MOMENTUM */
 
 if(momentum==="UP"){
 
@@ -612,7 +796,7 @@ putScore+=1;
 }
 
 
-/* Candle */
+/* CANDLE */
 
 if(candleDirection==="BULLISH"){
 
@@ -683,7 +867,7 @@ putScore>=7?
 
 
 /* =========================
-   SIGNAL DISPLAY
+   DISPLAY SIGNAL
 ========================= */
 
 document
@@ -730,7 +914,7 @@ document
 price.toFixed(5);
 
 
-/* ASSET */
+/* RSI */
 
 document
 .getElementById("rsi")
@@ -803,6 +987,15 @@ new Date()
 .toLocaleTimeString();
 
 
+/* SAVE SIGNAL */
+
+saveHistory(
+signal,
+price,
+confidence
+);
+
+
 seconds=60;
 
 }
@@ -843,9 +1036,11 @@ document
 if(timer){
 
 clearInterval(timer);
+
 clearInterval(countdownTimer);
 
 timer=null;
+
 countdownTimer=null;
 
 button.textContent=
@@ -912,8 +1107,7 @@ seconds+
 button.textContent=
 "■ STOP AUTO SIGNAL";
 
-button.className=
-"stop";
+button.className="stop";
 
 
 document
@@ -922,6 +1116,13 @@ document
 "🟢 AUTO SIGNAL STARTED";
 
 }
+
+
+/* =========================
+   LOAD HISTORY
+========================= */
+
+showHistory();
 
 </script>
 
