@@ -14,8 +14,12 @@ jobs:
       - name: Extract project
         run: |
           unzip -o "AutoPocketSignalAPK (1).zip" -d project
-          echo "android.useAndroidX=true" >> project/gradle.properties
-          echo "android.enableJetifier=true" >> project/gradle.properties
+
+          sed -i '/androidx.appcompat/d' project/app/build.gradle
+          sed -i '/implementation.*appcompat/d' project/app/build.gradle
+
+          rm -f project/gradle.properties
+          touch project/gradle.properties
 
       - name: Setup Java
         uses: actions/setup-java@v5
