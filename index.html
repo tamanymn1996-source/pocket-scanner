@@ -139,6 +139,32 @@ margin-top:14px;
 color:#60a5fa
 }
 
+.stats{
+margin-top:18px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px
+}
+
+.stat{
+background:#0d1015;
+padding:12px 5px;
+border-radius:11px;
+text-align:center
+}
+
+.stat span{
+display:block;
+color:#9ca3af;
+font-size:13px
+}
+
+.stat strong{
+display:block;
+font-size:21px;
+margin-top:5px
+}
+
 .history{
 margin-top:18px;
 background:#0d1015;
@@ -152,19 +178,23 @@ margin:5px 0 15px
 }
 
 .historyItem{
-display:flex;
-justify-content:space-between;
-align-items:center;
 padding:12px;
 margin-top:8px;
 background:#181d25;
 border-radius:10px
 }
 
-.historyItem small{
-margin:0;
-text-align:left;
-color:#888
+.historyTop{
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.historyBottom{
+display:flex;
+justify-content:space-between;
+margin-top:6px;
+color:#999
 }
 
 .callHistory{
@@ -178,6 +208,21 @@ font-weight:bold
 }
 
 .waitHistory{
+color:#f59e0b;
+font-weight:bold
+}
+
+.win{
+color:#22c55e;
+font-weight:bold
+}
+
+.loss{
+color:#ef4444;
+font-weight:bold
+}
+
+.pending{
 color:#f59e0b;
 font-weight:bold
 }
@@ -244,7 +289,7 @@ WAITING...
 
 <div class="box">
 ⏱️ Expiry
-<strong id="expiry">1 MIN</strong>
+<strong>1 MIN</strong>
 </div>
 
 <div class="box">
@@ -300,6 +345,31 @@ WAITING...
 Not started
 </div>
 
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+<span>✅ WINS</span>
+<strong id="wins">0</strong>
+</div>
+
+<div class="stat">
+<span>❌ LOSSES</span>
+<strong id="losses">0</strong>
+</div>
+
+<div class="stat">
+<span>🎯 WIN RATE</span>
+<strong id="winrate">0%</strong>
+</div>
+
+</div>
+
+
+<!-- HISTORY -->
+
 <div class="history">
 
 <h2>📜 Signal History</h2>
@@ -316,6 +386,7 @@ class="clearBtn">
 
 </div>
 
+
 <small>
 ⚠️ Technical estimates only.
 No strategy guarantees profit.
@@ -325,6 +396,7 @@ This app generates signals only and does not place trades.
 </div>
 </div>
 
+
 <script>
 
 let timer=null;
@@ -332,15 +404,13 @@ let countdownTimer=null;
 let seconds=60;
 
 
-/* =========================
+/* =================================
    EMA
-========================= */
+================================= */
 
 function calculateEMA(values,period){
 
-if(values.length<period){
-return null;
-}
+if(values.length<period)return null;
 
 let ema=
 values
@@ -360,23 +430,20 @@ return ema;
 }
 
 
-/* =========================
+/* =================================
    RSI
-========================= */
+================================= */
 
 function calculateRSI(values,period=14){
 
-if(values.length<period+1){
-return null;
-}
+if(values.length<period+1)return null;
 
 let gains=0;
 let losses=0;
 
 for(let i=1;i<=period;i++){
 
-let diff=
-values[i]-values[i-1];
+let diff=values[i]-values[i-1];
 
 if(diff>0){
 gains+=diff;
@@ -395,14 +462,10 @@ i<values.length;
 i++
 ){
 
-let diff=
-values[i]-values[i-1];
+let diff=values[i]-values[i-1];
 
-let gain=
-diff>0?diff:0;
-
-let loss=
-diff<0?Math.abs(diff):0;
+let gain=diff>0?diff:0;
+let loss=diff<0?Math.abs(diff):0;
 
 avgGain=
 ((avgGain*(period-1))+gain)/period;
@@ -412,9 +475,7 @@ avgLoss=
 
 }
 
-if(avgLoss===0){
-return 100;
-}
+if(avgLoss===0)return 100;
 
 let rs=avgGain/avgLoss;
 
@@ -422,30 +483,41 @@ return 100-(100/(1+rs));
 }
 
 
-/* =========================
-   SAVE HISTORY
-========================= */
+/* =================================
+   HISTORY
+================================= */
+
+function getHistory(){
+
+return JSON.parse(
+localStorage.getItem("signalHistory")||"[]"
+);
+
+}
+
 
 function saveHistory(signal,price,confidence){
 
-let history=
-JSON.parse(
-localStorage.getItem("signalHistory") || "[]"
-);
+if(signal==="WAIT")return;
+
+let history=getHistory();
 
 history.unshift({
 
 signal:signal,
 
-price:Number(price).toFixed(5),
+entry:Number(price).toFixed(5),
 
 confidence:confidence,
 
 asset:
 document.getElementById("asset").value,
 
-time:
-new Date().toLocaleTimeString()
+time:new Date().toLocaleTimeString(),
+
+result:"PENDING",
+
+exit:"—"
 
 });
 
@@ -457,19 +529,81 @@ JSON.stringify(history)
 );
 
 showHistory();
+
+updateStats();
+
 }
 
 
-/* =========================
+/* =================================
+   CHECK PREVIOUS SIGNAL
+================================= */
+
+function checkPreviousSignal(currentPrice){
+
+let history=getHistory();
+
+if(history.length===0)return;
+
+let item=history[0];
+
+if(item.result!=="PENDING")return;
+
+let entry=Number(item.entry);
+
+let price=Number(currentPrice);
+
+let result="";
+
+if(item.signal==="CALL"){
+
+if(price>entry){
+result="WIN";
+}else if(price<entry){
+result="LOSS";
+}
+
+}
+
+if(item.signal==="PUT"){
+
+if(price<entry){
+result="WIN";
+}else if(price>entry){
+result="LOSS";
+}
+
+}
+
+if(result){
+
+item.result=result;
+
+item.exit=price.toFixed(5);
+
+history[0]=item;
+
+localStorage.setItem(
+"signalHistory",
+JSON.stringify(history)
+);
+
+showHistory();
+
+updateStats();
+
+}
+
+}
+
+
+/* =================================
    SHOW HISTORY
-========================= */
+================================= */
 
 function showHistory(){
 
-let history=
-JSON.parse(
-localStorage.getItem("signalHistory") || "[]"
-);
+let history=getHistory();
 
 let box=
 document.getElementById("historyList");
@@ -477,7 +611,6 @@ document.getElementById("historyList");
 if(history.length===0){
 
 box.innerHTML="No signals yet";
-
 return;
 
 }
@@ -485,54 +618,110 @@ return;
 box.innerHTML=
 history.map(x=>{
 
-let cls=
+let signalClass=
 x.signal==="CALL"
-?"callHistory":
-x.signal==="PUT"
-?"putHistory":
-"waitHistory";
+?"callHistory"
+:"putHistory";
+
+let resultClass=
+x.result==="WIN"
+?"win":
+x.result==="LOSS"
+?"loss"
+:"pending";
+
+let resultText=
+x.result==="WIN"
+?"✅ WIN":
+x.result==="LOSS"
+?"❌ LOSS"
+:"⏳ PENDING";
 
 return `
+
 <div class="historyItem">
 
-<div>
+<div class="historyTop">
 
-<b class="${cls}">
+<b class="${signalClass}">
 ${x.signal}
 </b>
 
-<br>
-
-<small>
-${x.asset} • ${x.time}
-</small>
-
-</div>
-
-<div>
-
 <b>
-${x.price}
+${x.entry}
 </b>
 
-<br>
+</div>
 
-<small>
-${x.confidence}%
-</small>
+<div class="historyBottom">
+
+<span>
+${x.asset} • ${x.time}
+</span>
+
+<span class="${resultClass}">
+${resultText}
+</span>
+
+</div>
+
+<div class="historyBottom">
+
+<span>
+Confidence ${x.confidence}%
+</span>
+
+<span>
+Exit ${x.exit}
+</span>
 
 </div>
 
 </div>
+
 `;
 
 }).join("");
+
 }
 
 
-/* =========================
-   CLEAR HISTORY
-========================= */
+/* =================================
+   STATS
+================================= */
+
+function updateStats(){
+
+let history=getHistory();
+
+let wins=
+history.filter(x=>x.result==="WIN").length;
+
+let losses=
+history.filter(x=>x.result==="LOSS").length;
+
+let total=wins+losses;
+
+let rate=
+total>0
+?Math.round((wins/total)*100)
+:0;
+
+document.getElementById("wins")
+.textContent=wins;
+
+document.getElementById("losses")
+.textContent=losses;
+
+document.getElementById("winrate")
+.textContent=rate+"%";
+
+}
+
+
+/* =================================
+   CLEAR
+================================= */
 
 function clearHistory(){
 
@@ -540,31 +729,29 @@ localStorage.removeItem("signalHistory");
 
 showHistory();
 
+updateStats();
+
 }
 
 
-/* =========================
-   GET MARKET DATA
-========================= */
+/* =================================
+   GET DATA
+================================= */
 
 async function getData(){
 
 const key=
-document
-.getElementById("apiKey")
-.value
-.trim();
+document.getElementById("apiKey")
+.value.trim();
 
 const asset=
-document
-.getElementById("asset")
+document.getElementById("asset")
 .value;
 
 
 if(!key){
 
-document
-.getElementById("signal")
+document.getElementById("signal")
 .innerHTML=
 '<span class="wait">⚠️ API KEY پێویستە</span>';
 
@@ -573,8 +760,7 @@ return;
 }
 
 
-document
-.getElementById("status")
+document.getElementById("status")
 .textContent=
 "🔄 Analyzing market...";
 
@@ -608,10 +794,8 @@ data.message||"API error"
 }
 
 
-if(
-!data.values||
-data.values.length<35
-){
+if(!data.values||
+data.values.length<35){
 
 throw new Error(
 "Not enough candle data"
@@ -620,17 +804,15 @@ throw new Error(
 }
 
 
-/* Newest candle may still be forming */
+/*
+Newest candle may still be forming.
+*/
 
 const candles=
 data.values.slice(1);
 
-const latest=
-candles[0];
-
-const previous=
-candles[1];
-
+const latest=candles[0];
+const previous=candles[1];
 
 const closes=
 candles
@@ -647,6 +829,13 @@ Number(latest.open);
 const previousClose=
 Number(previous.close);
 
+
+/* Check previous signal */
+
+checkPreviousSignal(price);
+
+
+/* Indicators */
 
 const ema9=
 calculateEMA(closes,9);
@@ -671,9 +860,7 @@ throw new Error(
 }
 
 
-/* =========================
-   CANDLE
-========================= */
+/* Candle */
 
 let candleDirection="NEUTRAL";
 
@@ -681,18 +868,14 @@ if(price>open){
 
 candleDirection="BULLISH";
 
-}
-
-else if(price<open){
+}else if(price<open){
 
 candleDirection="BEARISH";
 
 }
 
 
-/* =========================
-   MOMENTUM
-========================= */
+/* Momentum */
 
 let momentum="NEUTRAL";
 
@@ -700,18 +883,14 @@ if(price>previousClose){
 
 momentum="UP";
 
-}
-
-else if(price<previousClose){
+}else if(price<previousClose){
 
 momentum="DOWN";
 
 }
 
 
-/* =========================
-   TREND
-========================= */
+/* Trend */
 
 let trend="SIDEWAYS";
 
@@ -719,18 +898,14 @@ if(ema9>ema21){
 
 trend="UP";
 
-}
-
-else if(ema9<ema21){
+}else if(ema9<ema21){
 
 trend="DOWN";
 
 }
 
 
-/* =========================
-   SCORE
-========================= */
+/* Score */
 
 let callScore=0;
 let putScore=0;
@@ -742,24 +917,20 @@ if(ema9>ema21){
 
 callScore+=2;
 
-}
-
-else if(ema9<ema21){
+}else if(ema9<ema21){
 
 putScore+=2;
 
 }
 
 
-/* PRICE VS EMA21 */
+/* Price */
 
 if(price>ema21){
 
 callScore+=1;
 
-}
-
-else if(price<ema21){
+}else if(price<ema21){
 
 putScore+=1;
 
@@ -768,52 +939,44 @@ putScore+=1;
 
 /* RSI */
 
-if(RSI>=52 && RSI<=68){
+if(RSI>=52&&RSI<=68){
 
 callScore+=2;
 
-}
-
-else if(RSI>=32 && RSI<=48){
+}else if(RSI>=32&&RSI<=48){
 
 putScore+=2;
 
 }
 
 
-/* MOMENTUM */
+/* Momentum */
 
 if(momentum==="UP"){
 
 callScore+=1;
 
-}
-
-else if(momentum==="DOWN"){
+}else if(momentum==="DOWN"){
 
 putScore+=1;
 
 }
 
 
-/* CANDLE */
+/* Candle */
 
 if(candleDirection==="BULLISH"){
 
 callScore+=1;
 
-}
-
-else if(candleDirection==="BEARISH"){
+}else if(candleDirection==="BEARISH"){
 
 putScore+=1;
 
 }
 
 
-/* =========================
-   SIGNAL
-========================= */
+/* Signal */
 
 let signal="WAIT";
 let className="wait";
@@ -825,12 +988,11 @@ Math.abs(callScore-putScore);
 
 
 if(
-callScore>=5 &&
+callScore>=5&&
 callScore>putScore
 ){
 
 signal="CALL";
-
 className="up";
 
 confidence=
@@ -838,20 +1000,19 @@ confidence=
 Math.min(difference*4,15);
 
 strength=
-callScore>=7?
-"STRONG":
-"MEDIUM";
+callScore>=7
+?"STRONG"
+:"MEDIUM";
 
 }
 
 
 else if(
-putScore>=5 &&
+putScore>=5&&
 putScore>callScore
 ){
 
 signal="PUT";
-
 className="down";
 
 confidence=
@@ -859,26 +1020,21 @@ confidence=
 Math.min(difference*4,15);
 
 strength=
-putScore>=7?
-"STRONG":
-"MEDIUM";
+putScore>=7
+?"STRONG"
+:"MEDIUM";
 
 }
 
 
-/* =========================
-   DISPLAY SIGNAL
-========================= */
+/* Display */
 
-document
-.getElementById("signal")
+document.getElementById("signal")
 .innerHTML=
 
 '<div>NEW SIGNAL</div>'+
 
-'<b class="'+
-className+
-'">'+
+'<b class="'+className+'">'+
 
 (
 signal==="CALL"
@@ -898,96 +1054,44 @@ confidence+
 '%</div>';
 
 
-/* ENTRY */
+document.getElementById("entry")
+.textContent=price.toFixed(5);
 
-document
-.getElementById("entry")
+document.getElementById("price")
+.textContent=price.toFixed(5);
+
+document.getElementById("rsi")
+.textContent=RSI.toFixed(1);
+
+document.getElementById("ema9")
+.textContent=ema9.toFixed(5);
+
+document.getElementById("ema21")
+.textContent=ema21.toFixed(5);
+
+document.getElementById("trend")
+.textContent=trend;
+
+document.getElementById("candle")
+.textContent=candleDirection;
+
+document.getElementById("momentum")
+.textContent=momentum;
+
+document.getElementById("strength")
+.textContent=strength;
+
+document.getElementById("score")
 .textContent=
-price.toFixed(5);
+callScore+" / "+putScore;
 
-
-/* PRICE */
-
-document
-.getElementById("price")
-.textContent=
-price.toFixed(5);
-
-
-/* RSI */
-
-document
-.getElementById("rsi")
-.textContent=
-RSI.toFixed(1);
-
-
-/* EMA */
-
-document
-.getElementById("ema9")
-.textContent=
-ema9.toFixed(5);
-
-document
-.getElementById("ema21")
-.textContent=
-ema21.toFixed(5);
-
-
-/* TREND */
-
-document
-.getElementById("trend")
-.textContent=
-trend;
-
-
-/* CANDLE */
-
-document
-.getElementById("candle")
-.textContent=
-candleDirection;
-
-
-/* MOMENTUM */
-
-document
-.getElementById("momentum")
-.textContent=
-momentum;
-
-
-/* STRENGTH */
-
-document
-.getElementById("strength")
-.textContent=
-strength;
-
-
-/* SCORE */
-
-document
-.getElementById("score")
-.textContent=
-callScore+
-" / "+
-putScore;
-
-
-/* STATUS */
-
-document
-.getElementById("status")
+document.getElementById("status")
 .textContent=
 "🟢 LIVE • Updated "+
-new Date()
-.toLocaleTimeString();
+new Date().toLocaleTimeString();
 
 
-/* SAVE SIGNAL */
+/* Save only CALL / PUT */
 
 saveHistory(
 signal,
@@ -1002,45 +1106,35 @@ seconds=60;
 
 catch(error){
 
-document
-.getElementById("status")
+document.getElementById("status")
 .textContent=
-"❌ "+
-error.message;
+"❌ "+error.message;
 
-document
-.getElementById("signal")
+document.getElementById("signal")
 .innerHTML=
-'<span class="wait">'+
-'⚠️ DATA ERROR'+
-'</span>';
+'<span class="wait">⚠️ DATA ERROR</span>';
 
 }
 
 }
 
 
-/* =========================
+/* =================================
    START / STOP
-========================= */
+================================= */
 
 function toggleAuto(){
 
 const button=
-document
-.getElementById("startBtn");
+document.getElementById("startBtn");
 
-
-/* STOP */
 
 if(timer){
 
 clearInterval(timer);
-
 clearInterval(countdownTimer);
 
 timer=null;
-
 countdownTimer=null;
 
 button.textContent=
@@ -1048,13 +1142,10 @@ button.textContent=
 
 button.className="";
 
-document
-.getElementById("status")
-.textContent=
-"Stopped";
+document.getElementById("status")
+.textContent="Stopped";
 
-document
-.getElementById("countdown")
+document.getElementById("countdown")
 .textContent="";
 
 return;
@@ -1062,15 +1153,14 @@ return;
 }
 
 
-/* START */
+/* Start */
 
 getData();
 
 seconds=60;
 
 
-timer=
-setInterval(
+timer=setInterval(
 function(){
 
 getData();
@@ -1082,22 +1172,17 @@ seconds=60;
 );
 
 
-countdownTimer=
-setInterval(
+countdownTimer=setInterval(
 function(){
 
 if(seconds>0){
-
 seconds--;
-
 }
 
-document
-.getElementById("countdown")
+document.getElementById("countdown")
 .textContent=
 "⏱️ Next analysis: "+
-seconds+
-"s";
+seconds+"s";
 
 },
 1000
@@ -1109,20 +1194,17 @@ button.textContent=
 
 button.className="stop";
 
-
-document
-.getElementById("status")
+document.getElementById("status")
 .textContent=
 "🟢 AUTO SIGNAL STARTED";
 
 }
 
 
-/* =========================
-   LOAD HISTORY
-========================= */
+/* Load */
 
 showHistory();
+updateStats();
 
 </script>
 
