@@ -9,122 +9,131 @@
 *{box-sizing:border-box}
 
 body{
-  margin:0;
-  background:#0f1115;
-  color:#fff;
-  font-family:Arial,sans-serif
+ margin:0;
+ background:#0f1115;
+ color:#fff;
+ font-family:Arial,sans-serif;
 }
 
 .wrap{
-  max-width:520px;
-  margin:auto;
-  padding:18px
+ max-width:520px;
+ margin:auto;
+ padding:18px;
 }
 
 .card{
-  background:#191d24;
-  border:1px solid #303640;
-  border-radius:18px;
-  padding:18px
+ background:#191d24;
+ border:1px solid #303640;
+ border-radius:20px;
+ padding:20px;
 }
 
 h1{
-  text-align:center;
-  margin:8px 0 4px
+ text-align:center;
+ margin:5px 0 4px;
+ font-size:30px;
 }
 
 .sub{
-  text-align:center;
-  color:#aaa;
-  margin-bottom:18px
+ text-align:center;
+ color:#aaa;
+ margin-bottom:22px;
 }
 
 label{
-  display:block;
-  color:#bbb;
-  margin:12px 0 6px
-}
-
-input,select,button{
-  width:100%;
-  padding:15px;
-  border-radius:11px;
-  border:1px solid #39404c;
-  font-size:17px
+ display:block;
+ color:#bbb;
+ font-size:18px;
+ margin:15px 0 8px;
 }
 
 input,select{
-  background:#0f1115;
-  color:#fff
+ width:100%;
+ padding:18px;
+ border-radius:14px;
+ border:1px solid #3b4250;
+ background:#0d0f14;
+ color:#fff;
+ font-size:20px;
+ outline:none;
 }
 
 button{
-  margin-top:16px;
-  background:#2563eb;
-  color:#fff;
-  border:0;
-  font-weight:bold;
-  cursor:pointer
+ width:100%;
+ border:0;
+ border-radius:15px;
+ padding:18px;
+ margin-top:22px;
+ background:#2864e8;
+ color:#fff;
+ font-size:20px;
+ font-weight:bold;
+ cursor:pointer;
 }
 
 button:active{
-  transform:scale(.98)
+ transform:scale(.98);
+}
+
+.result{
+ margin-top:25px;
+ background:#0d0f14;
+ border-radius:20px;
+ padding:25px 15px;
+ text-align:center;
+}
+
+.signal-title{
+ color:#ddd;
+ font-size:20px;
 }
 
 .signal{
-  margin-top:18px;
-  text-align:center;
-  padding:20px;
-  border-radius:15px;
-  background:#0f1115
+ font-size:58px;
+ font-weight:bold;
+ margin:10px 0;
 }
 
-.signal b{
-  font-size:38px;
-  display:block;
-  margin:8px
-}
+.call{color:#20d061}
+.put{color:#ff4141}
+.wait{color:#ffc126}
 
-.up{
-  color:#22c55e
-}
-
-.down{
-  color:#ef4444
-}
-
-.wait{
-  color:#f59e0b
+.conf{
+ font-size:20px;
+ color:#ddd;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:14px
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:16px;
+ margin-top:18px;
 }
 
 .box{
-  background:#0f1115;
-  padding:14px;
-  border-radius:10px;
-  text-align:center;
-  color:#bbb
+ background:#0d0f14;
+ border-radius:16px;
+ padding:18px 10px;
+ text-align:center;
+}
+
+.box span{
+ display:block;
+ color:#aaa;
+ font-size:18px;
+ margin-bottom:10px;
 }
 
 .box strong{
-  display:block;
-  color:#fff;
-  font-size:19px;
-  margin-top:5px
+ font-size:22px;
 }
 
-small{
-  display:block;
-  color:#888;
-  text-align:center;
-  margin-top:14px;
-  line-height:1.5
+.note{
+ margin-top:22px;
+ color:#999;
+ text-align:center;
+ font-size:15px;
+ line-height:1.5;
 }
 </style>
 </head>
@@ -132,75 +141,74 @@ small{
 <body>
 
 <div class="wrap">
+
 <div class="card">
 
 <h1>📊 Pocket Broker Signal</h1>
-
-<div class="sub">
-Simple technical signal analyzer
-</div>
+<div class="sub">Technical Signal Analyzer</div>
 
 <label>Asset</label>
 <input id="asset" value="EUR/USD">
 
 <label>Current Price</label>
-<input id="price" type="number" step="any" placeholder="1.0850">
+<input id="price" type="number" step="any" value="1.0850">
 
 <label>Previous Price</label>
-<input id="prev" type="number" step="any" placeholder="1.0840">
+<input id="prev" type="number" step="any" value="1.0840">
 
 <label>RSI (0–100)</label>
-<input id="rsi" type="number" min="0" max="100" value="50">
+<input id="rsi" type="number" min="0" max="100" step="any" value="50">
 
 <label>EMA 9</label>
-<input id="ema9" type="number" step="any" placeholder="1.0850">
+<input id="ema9" type="number" step="any" value="1.0850">
 
 <label>EMA 21</label>
-<input id="ema21" type="number" step="any" placeholder="1.0840">
+<input id="ema21" type="number" step="any" value="1.0840">
 
 <label>Timeframe</label>
-
-<select id="tf">
+<select id="timeframe">
 <option>1 MIN</option>
 <option>5 MIN</option>
 <option>15 MIN</option>
+<option>30 MIN</option>
+<option>1 HOUR</option>
 </select>
 
-<button onclick="analyze()">
-🔎 GENERATE SIGNAL
-</button>
+<button onclick="analyze()">🔎 GENERATE SIGNAL</button>
 
-<div class="signal" id="signal">
-Result will appear here
+<div id="result" class="result">
+<div class="signal-title">Signal</div>
+<div class="signal wait">WAIT</div>
+<div class="conf">Enter values and generate signal</div>
 </div>
 
 <div class="grid">
 
 <div class="box">
-Asset
-<strong id="a">—</strong>
+<span>Asset</span>
+<strong id="outAsset">—</strong>
 </div>
 
 <div class="box">
-Timeframe
-<strong id="t">—</strong>
+<span>Timeframe</span>
+<strong id="outTime">—</strong>
 </div>
 
 <div class="box">
-RSI
-<strong id="r">—</strong>
+<span>RSI</span>
+<strong id="outRSI">—</strong>
 </div>
 
 <div class="box">
-Trend
-<strong id="trend">—</strong>
+<span>Trend</span>
+<strong id="outTrend">—</strong>
 </div>
 
 </div>
 
-<small>
-⚠️ Technical analysis only; signals are not guaranteed profits.
-</small>
+<div class="note">
+⚠️ Technical analysis only. Signals are not guaranteed profits.
+</div>
 
 </div>
 </div>
@@ -209,137 +217,147 @@ Trend
 
 function analyze(){
 
-const asset = document.getElementById("asset");
-const price = document.getElementById("price");
-const prev = document.getElementById("prev");
-const rsi = document.getElementById("rsi");
-const ema9 = document.getElementById("ema9");
-const ema21 = document.getElementById("ema21");
-const tf = document.getElementById("tf");
+ const asset = document.getElementById("asset").value.trim();
 
-const signal = document.getElementById("signal");
-const a = document.getElementById("a");
-const t = document.getElementById("t");
-const r = document.getElementById("r");
-const trend = document.getElementById("trend");
+ const p = parseFloat(
+   document.getElementById("price").value
+ );
 
-const p = Number(price.value);
-const pr = Number(prev.value);
-const rv = Number(rsi.value);
-const e9 = Number(ema9.value);
-const e21 = Number(ema21.value);
+ const prev = parseFloat(
+   document.getElementById("prev").value
+ );
 
-if(
-  !asset.value ||
-  !Number.isFinite(p) ||
-  !Number.isFinite(pr) ||
-  !Number.isFinite(rv) ||
-  !Number.isFinite(e9) ||
-  !Number.isFinite(e21)
-){
+ const rsi = parseFloat(
+   document.getElementById("rsi").value
+ );
 
-signal.innerHTML =
-'<span class="wait">⚠️ Enter all values</span>';
+ const ema9 = parseFloat(
+   document.getElementById("ema9").value
+ );
 
-return;
-}
+ const ema21 = parseFloat(
+   document.getElementById("ema21").value
+ );
 
-if(rv < 0 || rv > 100){
+ const timeframe =
+   document.getElementById("timeframe").value;
 
-signal.innerHTML =
-'<span class="wait">⚠️ RSI must be between 0 and 100</span>';
+ if(
+   !asset ||
+   !Number.isFinite(p) ||
+   !Number.isFinite(prev) ||
+   !Number.isFinite(rsi) ||
+   !Number.isFinite(ema9) ||
+   !Number.isFinite(ema21) ||
+   rsi < 0 ||
+   rsi > 100
+ ){
+   document.getElementById("result").innerHTML = `
+     <div class="signal-title">⚠️ Error</div>
+     <div class="signal wait" style="font-size:30px">
+       ENTER ALL VALUES
+     </div>
+   `;
+   return;
+ }
 
-return;
-}
+ let score = 0;
 
-/*
-Signal scoring
+ /* PRICE MOMENTUM */
+ if(p > prev){
+   score += 1;
+ }else if(p < prev){
+   score -= 1;
+ }
 
-Price > Previous = bullish
-EMA9 > EMA21 = bullish
-RSI 50-70 = bullish
-RSI 30-50 = bearish
-*/
+ /* EMA TREND */
+ if(ema9 > ema21){
+   score += 2;
+ }else if(ema9 < ema21){
+   score -= 2;
+ }
 
-let score = 0;
+ /* RSI */
+ if(rsi >= 50 && rsi < 70){
+   score += 1;
+ }else if(rsi <= 50 && rsi > 30){
+   score -= 1;
+ }
 
-if(p > pr){
-score++;
-}else if(p < pr){
-score--;
-}
+ /* Avoid extreme RSI */
+ if(rsi >= 70){
+   score -= 1;
+ }
 
-if(e9 > e21){
-score++;
-}else if(e9 < e21){
-score--;
-}
+ if(rsi <= 30){
+   score += 1;
+ }
 
-if(rv > 50 && rv < 70){
-score++;
-}else if(rv < 50 && rv > 30){
-score--;
-}
+ let signal;
+ let cls;
+ let confidence;
 
-let txt = "WAIT";
-let cls = "wait";
-let confidence = 55;
+ if(score >= 3){
 
-if(score >= 2){
+   signal = "CALL";
+   cls = "call";
 
-txt = "CALL";
-cls = "up";
-confidence = 70;
+   confidence = Math.min(
+     95,
+     60 + (score - 3) * 8
+   );
 
-}else if(score <= -2){
+ }else if(score <= -3){
 
-txt = "PUT";
-cls = "down";
-confidence = 70;
+   signal = "PUT";
+   cls = "put";
 
-}else if(score === 1){
+   confidence = Math.min(
+     95,
+     60 + (Math.abs(score) - 3) * 8
+   );
 
-txt = "CALL";
-cls = "up";
-confidence = 60;
+ }else{
 
-}else if(score === -1){
+   signal = "WAIT";
+   cls = "wait";
 
-txt = "PUT";
-cls = "down";
-confidence = 60;
-}
+   confidence = 50 + Math.abs(score) * 3;
+ }
 
-/* Result */
+ let trend;
 
-signal.innerHTML =
-'<div>Signal</div>' +
-'<b class="' + cls + '">' +
-(txt === "CALL" ? "🟢 " :
- txt === "PUT" ? "🔴 " : "🟡 ") +
-txt +
-'</b>' +
-'<div>Confidence: ' +
-confidence +
-'%</div>';
+ if(ema9 > ema21){
+   trend = "UP";
+ }else if(ema9 < ema21){
+   trend = "DOWN";
+ }else{
+   trend = "SIDEWAYS";
+ }
 
-/* Information boxes */
+ document.getElementById("result").innerHTML = `
+   <div class="signal-title">Signal</div>
 
-a.textContent = asset.value;
-t.textContent = tf.value;
-r.textContent = rv;
+   <div class="signal ${cls}">
+     ${signal}
+   </div>
 
-if(score > 0){
-trend.textContent = "UP";
-trend.className = "up";
-}else if(score < 0){
-trend.textContent = "DOWN";
-trend.className = "down";
-}else{
-trend.textContent = "SIDEWAYS";
-trend.className = "";
-}
+   <div class="conf">
+     Confidence: ${confidence}%
+   </div>
+ `;
 
+ document.getElementById("outAsset").textContent =
+   asset;
+
+ document.getElementById("outTime").textContent =
+   timeframe;
+
+ document.getElementById("outRSI").textContent =
+   rsi;
+
+ document.getElementById("outTrend").textContent =
+   trend;
 }
 
 </script>
