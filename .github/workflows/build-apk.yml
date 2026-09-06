@@ -1,4 +1,4 @@
- name: Build APK
+name: Build APK
 
 on:
   workflow_dispatch:
@@ -11,15 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract project
+      - name: Extract APK project
         run: |
+          rm -rf project
           unzip -o "AutoPocketSignalAPK (1).zip" -d project
 
-          cat > project/gradle.properties <<'EOF'
-android.useAndroidX=false
-android.enableJetifier=false
-EOF
-
+      - name: Fix Android project
+        run: |
           cat > project/settings.gradle <<'EOF'
 pluginManagement {
     repositories {
@@ -65,42 +63,8 @@ android {
 }
 EOF
 
-          mkdir -p project/app/src/main/res/values
           mkdir -p project/app/src/main/java/com/pocket/signal
-
-          cat > project/app/src/main/res/values/styles.xml <<'EOF'
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
-    </style>
-</resources>
-EOF
-
-          cat > project/app/src/main/AndroidManifest.xml <<'EOF'
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <application
-        android:label="Auto Pocket Signal PRO"
-        android:theme="@style/AppTheme">
-
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
-    </application>
-
-</manifest>
-EOF
+          mkdir -p project/app/src/main/res/values
 
           cat > project/app/src/main/java/com/pocket/signal/MainActivity.java <<'EOF'
 package com.pocket.signal;
@@ -133,6 +97,33 @@ public class MainActivity extends Activity {
 }
 EOF
 
+          cat > project/app/src/main/AndroidManifest.xml <<'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="Auto Pocket Signal PRO"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+    </application>
+
+</manifest>
+EOF
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
@@ -152,4 +143,4 @@ EOF
         uses: actions/upload-artifact@v4
         with:
           name: AutoPocketSignal-APK
-          path: project/app/build/outputs/apk/debug/app-debug.apk 
+          path: project/app/build/outputs/apk/debug/app-debug.apk
